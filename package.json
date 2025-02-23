@@ -7,7 +7,8 @@
   },
   "scripts": {
     "postinstall": "bash build.sh",
-    "test": "python -m pytest tests/"
+    "test": "uv pip install pytest && python -m pytest tests/",
+    "build": "uv pip compile requirements.txt -o requirements.lock"
   },
   "author": "Nbiish Justin Kenwabikise <nbiish@umich.edu>",
   "license": "UNLICENSED",

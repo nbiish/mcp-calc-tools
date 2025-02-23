@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Create virtual environment if it doesn't exist
-[ ! -d "venv" ] && python3 -m venv venv
+# Create virtual environment using uv
+uv venv
 
-# Activate virtual environment
-source venv/bin/activate
+# Generate lock file if it doesn't exist
+[ ! -f "requirements.lock" ] && uv pip compile requirements.txt -o requirements.lock
 
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies from lock file
+uv pip install -r requirements.lock
 
 # Make server file executable
 chmod +x src/server.py
@@ -19,7 +19,8 @@ mkdir -p bin
 cat > bin/mcp-calc-tools << 'EOF'
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR/../venv/bin/activate"
+export VIRTUAL_ENV="$DIR/../.venv"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
 exec python3 "$DIR/../src/server.py" "$@"
 EOF
 

@@ -12,19 +12,21 @@ Advanced calculus tools for Model Context Protocol (MCP) servers, implementing v
 
 ## Installation
 
-Install globally using uvx:
-
-```bash
-uvx mcp-calc-tools
-```
-
-For development:
+## Installation
 
 ```bash
 git clone https://github.com/nbiish/mcp-calc-tools.git
 cd mcp-calc-tools
 ./build.sh
 ```
+
+The build script will:
+1. Create a virtual environment using UV
+2. Generate a lock file from requirements.txt
+3. Install dependencies in an isolated environment
+4. Set up the launcher script
+
+Note: Requires UV package manager (`pip install uv`)
 
 ## Usage Examples
 

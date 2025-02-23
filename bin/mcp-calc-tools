@@ -1,4 +1,5 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR/../venv/bin/activate"
+export VIRTUAL_ENV="$DIR/../.venv"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
 exec python3 "$DIR/../src/server.py" "$@"
