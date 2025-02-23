@@ -1,9 +1,9 @@
 {
-  "name": "mcp-calc-tools",
+  "name": "mcp-server-calc-tools",
   "version": "0.1.0",
   "description": "Advanced calculus tools for MCP servers",
   "bin": {
-    "mcp-calc-tools": "./bin/mcp-calc-tools"
+    "mcp-server-calc-tools": "./bin/mcp-server-calc-tools"
   },
   "scripts": {
     "postinstall": "bash build.sh",

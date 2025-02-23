@@ -16,7 +16,7 @@ chmod +x src/server.py
 mkdir -p bin
 
 # Create launcher script
-cat > bin/mcp-calc-tools << 'EOF'
+cat > bin/mcp-server-calc-tools << 'EOF'
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export VIRTUAL_ENV="$DIR/../.venv"
@@ -24,4 +24,4 @@ export PATH="$VIRTUAL_ENV/bin:$PATH"
 exec python3 "$DIR/../src/server.py" "$@"
 EOF
 
-chmod +x bin/mcp-calc-tools
+chmod +x bin/mcp-server-calc-tools
