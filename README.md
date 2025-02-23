@@ -12,10 +12,18 @@ Advanced calculus tools for Model Context Protocol (MCP) servers, implementing v
 
 ## Installation
 
+Install globally using uvx:
+
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # On Unix/macOS
-pip install -r requirements.txt
+uvx mcp-calc-tools
+```
+
+For development:
+
+```bash
+git clone https://github.com/nbiish/mcp-calc-tools.git
+cd mcp-calc-tools
+./build.sh
 ```
 
 ## Usage Examples

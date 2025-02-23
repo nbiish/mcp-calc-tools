@@ -1,0 +1,18 @@
+{
+  "name": "mcp-calc-tools",
+  "version": "0.1.0",
+  "description": "Advanced calculus tools for MCP servers",
+  "bin": {
+    "mcp-calc-tools": "./bin/mcp-calc-tools"
+  },
+  "scripts": {
+    "postinstall": "bash build.sh",
+    "test": "python -m pytest tests/"
+  },
+  "author": "Nbiish Justin Kenwabikise <nbiish@umich.edu>",
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
