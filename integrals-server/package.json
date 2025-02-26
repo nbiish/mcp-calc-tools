@@ -1,0 +1,27 @@
+{
+  "name": "integral-tools-server",
+  "version": "0.1.0",
+  "description": "integral tools for mcp",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "integral-tools": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "0.6.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}
