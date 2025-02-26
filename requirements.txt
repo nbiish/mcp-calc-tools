@@ -1,4 +1,0 @@
-fastmcp>=0.4.1
-numpy>=1.22.0
-scipy>=1.8.0
-sympy>=1.10.0
