@@ -1,70 +1,81 @@
-# 			integrals-server MCP Server
+# Integrals MCP Server
 
-integral tools for mcp
-
-This is a TypeScript-based MCP server that implements a simple notes system. It demonstrates core MCP concepts by providing:
-
-- Resources representing text notes with URIs and metadata
-- Tools for creating new notes
-- Prompts for generating summaries of notes
+This is an MCP (Model Context Protocol) server that calculates integrals for mathematical expressions.
 
 ## Features
 
-### Resources
-- List and access notes via `note://` URIs
-- Each note has a title, content and metadata
-- Plain text mime type for simple content access
-
-### Tools
-- `create_note` - Create new text notes
-  - Takes title and content as required parameters
-  - Stores note in server state
-
-### Prompts
-- `summarize_notes` - Generate a summary of all stored notes
-  - Includes all note contents as embedded resources
-  - Returns structured prompt for LLM summarization
-
-## Development
-
-Install dependencies:
-```bash
-npm install
-```
-
-Build the server:
-```bash
-npm run build
-```
-
-For development with auto-rebuild:
-```bash
-npm run watch
-```
+- Calculate definite integrals with specific bounds
+- Handle various mathematical expressions using the mathjs library
 
 ## Installation
 
-To use with Claude Desktop, add the server config:
+```bash
+# Install dependencies
+npm install
 
-On MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
+# Build the server
+npm run build
+```
+
+## Usage
+
+Start the server:
+
+```bash
+npm start
+```
+
+The server will listen on port 3400 by default.
+
+## API
+
+The server supports the following MCP method:
+
+### calculateIntegral
+
+Calculate an integral of a mathematical expression.
+
+**Parameters:**
+
+- `expression` (string): The mathematical expression to integrate
+- `variable` (string): The variable to integrate with respect to
+- `lowerBound` (number|string, optional): Lower bound for definite integral
+- `upperBound` (number|string, optional): Upper bound for definite integral
+
+**Example request:**
 
 ```json
 {
-  "mcpServers": {
-    "			integrals-server": {
-      "command": "/path/to/			integrals-server/build/index.js"
-    }
+  "method": "calculateIntegral",
+  "parameters": {
+    "expression": "x^2",
+    "variable": "x",
+    "lowerBound": 0,
+    "upperBound": 1
   }
 }
 ```
 
-### Debugging
+**Example response:**
 
-Since MCP servers communicate over stdio, debugging can be challenging. We recommend using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector), which is available as a package script:
-
-```bash
-npm run inspector
+```json
+{
+  "result": 0.3333333333333333
+}
 ```
 
-The Inspector will provide a URL to access debugging tools in your browser.
+## Cline Integration
+
+To use this server with Cline, make sure it's properly configured in your `cline_mcp_settings.json` file:
+
+```json
+"integrals-server": {
+  "command": "node",
+  "args": [
+    "/path/to/integrals-server/build/index.js"
+  ],
+  "cwd": "/path/to/mcp-calc-tools",
+  "disabled": false,
+  "autoApprove": ["calculateIntegral"]
+}
+```

@@ -1,9 +1,10 @@
 {
-  "name": "integral-tools-server",
-  "version": "0.1.0",
-  "description": "integral tools for mcp",
+  "name": "integrals-server",
+  "version": "1.0.0",
+  "description": "MCP server for calculating integrals",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
+  "main": "build/index.js",
   "bin": {
     "integral-tools": "./build/index.js"
   },
@@ -11,17 +12,21 @@
     "build"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x build/index.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "start": "node build/index.js",
+    "dev": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "0.6.0",
-    "zod": "^3.24.2"
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "zod": "^3.24.2",
+    "mathjs": "^11.8.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
-    "typescript": "^5.3.3"
+    "@types/node": "^18.15.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
   }
 }
