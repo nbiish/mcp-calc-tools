@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides advanced mathematical and financial calculation tools for integration with AI code assistants like Cline and Roo Code.
 
+<a href="https://glama.ai/mcp/servers/s2q7kkn40a">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/s2q7kkn40a/badge" alt="Calc Tools MCP server" />
+</a>
+
 ## Overview
 
 MCP Calc Tools exposes mathematical computation capabilities through a standardized interface that AI assistants can interact with. This enables AI tools to perform complex calculations without having to implement mathematical algorithms directly.
