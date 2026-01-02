@@ -1,604 +1,380 @@
 #!/usr/bin/env node
 import { genkit, z } from 'genkit';
 import { mcpServer } from 'genkitx-mcp';
-import * as math from 'mathjs';
+import * as calculus from './src/calculus.js';
+import * as finance from './src/finance.js';
+import * as transform from './src/transforms.js';
+import * as linalg from './src/linear-algebra.js';
+import * as prob from './src/probability.js';
+import * as optim from './src/optimization.js';
+import * as utils from './src/utils.js';
+import * as pipelines from './src/pipelines.js';
 
 const ai = genkit({});
 
-// Helper functions for mathematical operations
-const derivative = (expr, variable = 'x') => {
-  try {
-    const node = math.parse(expr);
-    const derivativeExpr = math.derivative(node, variable);
-    return derivativeExpr.toString();
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
+// --- Calculus Tools ---
 
-const integral = (expr, variable = 'x') => {
-  try {
-    // For basic polynomials
-    const powerMatch = expr.match(new RegExp(`${variable}\\^(\\d+)`));
-    if (powerMatch) {
-      const n = parseInt(powerMatch[1]);
-      return `${variable}^${n + 1}/${n + 1}`;
-    }
-    
-    // For basic functions
-    const rules = {
-      'e^x': 'e^x',
-      '1/x': `ln|${variable}|`,
-      [`sin(${variable})`]: `-cos(${variable})`,
-      [`cos(${variable})`]: `sin(${variable})`,
-      'x': 'x^2/2'
-    };
-    
-    return rules[expr] || 'Cannot compute integral';
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-const riemannSum = (expr, variable, a, b, n, method = 'midpoint') => {
-  try {
-    const deltaX = (b - a) / n;
-    let sum = 0;
-    const node = math.parse(expr);
-    const scope = {};
-    
-    if (method === 'left' || method === 'right') {
-      const offset = method === 'right' ? 1 : 0;
-      for (let i = 0; i < n; i++) {
-        const x = a + (i + offset) * deltaX;
-        scope[variable] = x;
-        sum += math.evaluate(node, scope) * deltaX;
-      }
-    } else if (method === 'midpoint') {
-      for (let i = 0; i < n; i++) {
-        const x = a + (i + 0.5) * deltaX;
-        scope[variable] = x;
-        sum += math.evaluate(node, scope) * deltaX;
-      }
-    } else if (method === 'trapezoid') {
-      for (let i = 0; i <= n; i++) {
-        const x = a + i * deltaX;
-        scope[variable] = x;
-        const coef = (i === 0 || i === n) ? 0.5 : 1;
-        sum += coef * math.evaluate(node, scope) * deltaX;
-      }
-    }
-    
-    return sum;
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-
-// Define mathematical tools
 ai.defineTool(
   {
     name: 'derivative',
-    description: 'Calculate the derivative of a mathematical expression',
+    description: 'Calculate the symbolic derivative of a mathematical expression. Use for finding slopes, rates of change, and optimization points. Example: derivative("x^3 + 2x", "x") -> "3 * x ^ 2 + 2"',
     inputSchema: z.object({
-      expression: z.string().describe('Mathematical expression (e.g., "x^2", "e^x", "sin(x)")'),
-      variable: z.string().optional().describe('Variable to differentiate with respect to (default: x)')
+      expression: z.string().describe('Mathematical expression (e.g., "x^2", "sin(x)", "log(x)")'),
+      variable: z.string().optional().default('x').describe('Variable to differentiate with respect to')
     }),
     outputSchema: z.string(),
   },
-  async ({ expression, variable = 'x' }) => {
-    return derivative(expression, variable);
-  }
+  async ({ expression, variable }) => calculus.derivative(expression, variable)
 );
 
 ai.defineTool(
   {
     name: 'integral',
-    description: 'Calculate the indefinite integral of a mathematical expression',
+    description: 'Calculate the symbolic indefinite integral (antiderivative). Example: integral("2x") -> "x^2". Note: Only supports basic elementary functions.',
     inputSchema: z.object({
-      expression: z.string().describe('Mathematical expression (e.g., "x^2", "e^x", "sin(x)")'),
-      variable: z.string().optional().describe('Variable to integrate with respect to (default: x)')
+      expression: z.string().describe('Expression to integrate'),
+      variable: z.string().optional().default('x').describe('Variable of integration')
     }),
     outputSchema: z.string(),
   },
-  async ({ expression, variable = 'x' }) => {
-    return integral(expression, variable);
-  }
+  async ({ expression, variable }) => calculus.integral(expression, variable)
 );
 
 ai.defineTool(
   {
     name: 'riemann_sum',
-    description: 'Calculate the Riemann sum of a function using different methods',
+    description: 'Numerical definite integration using Riemann sums. Example: riemann_sum("x^2", "x", 0, 1, 1000, "trapezoid")',
     inputSchema: z.object({
       expression: z.string().describe('Function to integrate'),
-      variable: z.string().describe('Variable of integration'),
-      a: z.number().describe('Lower limit of integration'),
-      b: z.number().describe('Upper limit of integration'),
-      n: z.number().describe('Number of subintervals'),
+      variable: z.string().describe('Variable'),
+      a: z.number().describe('Start point'),
+      b: z.number().describe('End point'),
+      n: z.number().min(1).max(100000).describe('Number of intervals (max 100,000)'),
       method: z.enum(['left', 'right', 'midpoint', 'trapezoid']).default('midpoint')
-        .describe('Method: left, right, midpoint, or trapezoid')
     }),
     outputSchema: z.number(),
   },
-  async ({ expression, variable, a, b, n, method }) => {
-    return riemannSum(expression, variable, a, b, n, method);
-  }
-);
-
-
-ai.defineTool(
-  {
-    name: 'area',
-    description: 'Calculate the area under a curve between two points',
-    inputSchema: z.object({
-      expression: z.string(),
-      start: z.number(),
-      end: z.number(),
-      n: z.number().optional().describe('Number of subintervals (default: 1000)')
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ expression, start, end, n = 1000 }) => {
-    return riemannSum(expression, 'x', start, end, n, 'trapezoid');
-  }
-);
-
-ai.defineTool(
-  {
-    name: 'volume',
-    description: 'Calculate the volume of revolution around x-axis',
-    inputSchema: z.object({
-      expression: z.string(),
-      start: z.number(),
-      end: z.number()
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ expression, start, end }) => {
-    // Volume of revolution using disk method
-    const steps = 1000;
-    const dx = (end - start) / steps;
-    let volume = 0;
-    
-    for (let i = 0; i < steps; i++) {
-      const x = start + i * dx;
-      const y = eval(expression.replace(/x/g, `(${x})`));
-      volume += Math.PI * y * y * dx;
-    }
-    
-    return volume;
-  }
-);
-
-ai.defineTool(
-  {
-    name: 'logarithm',
-    description: 'Calculate logarithm with any base',
-    inputSchema: z.object({
-      value: z.number(),
-      base: z.number().optional()
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ value, base = Math.E }) => {
-    return Math.log(value) / Math.log(base);
-  }
-);
-
-ai.defineTool(
-  {
-    name: 'exponential',
-    description: 'Calculate exponential function (e^x)',
-    inputSchema: z.object({
-      power: z.number()
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ power }) => {
-    return Math.exp(power);
-  }
-);
-
-// Financial analysis tools
-ai.defineTool(
-  {
-    name: 'compound_interest',
-    description: 'Calculate compound interest',
-    inputSchema: z.object({
-      principal: z.number(),
-      rate: z.number(), // annual interest rate as decimal
-      time: z.number(), // years
-      compounds: z.number().optional() // times per year
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ principal, rate, time, compounds = 12 }) => {
-    return principal * Math.pow(1 + rate/compounds, compounds * time);
-  }
-);
-
-ai.defineTool(
-  {
-    name: 'present_value',
-    description: 'Calculate present value of future cash flows',
-    inputSchema: z.object({
-      futureValue: z.number(),
-      rate: z.number(), // discount rate as decimal
-      time: z.number() // years
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ futureValue, rate, time }) => {
-    return futureValue / Math.pow(1 + rate, time);
-  }
-);
-
-ai.defineTool(
-  {
-    name: 'npv',
-    description: 'Calculate Net Present Value of cash flows',
-    inputSchema: z.object({
-      cashFlows: z.array(z.number()),
-      rate: z.number() // discount rate as decimal
-    }),
-    outputSchema: z.number(),
-  },
-  async ({ cashFlows, rate }) => {
-    return cashFlows.reduce((npv, cf, t) => 
-      npv + cf / Math.pow(1 + rate, t), 0);
-  }
-);
-
-const darbouxSum = (expr, variable, a, b, n, type = 'upper') => {
-  try {
-    const deltaX = (b - a) / n;
-    let sum = 0;
-    const node = math.parse(expr);
-    const scope = {};
-
-    for (let i = 0; i < n; i++) {
-      const x1 = a + i * deltaX;
-      const x2 = x1 + deltaX;
-      scope[variable] = x1;
-      const y1 = math.evaluate(node, scope);
-      scope[variable] = x2;
-      const y2 = math.evaluate(node, scope);
-      
-      const value = type === 'upper' ? Math.max(y1, y2) : Math.min(y1, y2);
-      sum += value * deltaX;
-    }
-    
-    return sum;
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-const findLimit = (expr, variable, approach) => {
-  try {
-    const node = math.parse(expr);
-    const scope = {};
-    const epsilon = 1e-10;
-    
-    // Evaluate near the approach point
-    scope[variable] = approach + epsilon;
-    const rightLimit = math.evaluate(node, scope);
-    
-    scope[variable] = approach - epsilon;
-    const leftLimit = math.evaluate(node, scope);
-    
-    // Check if limits from both sides are approximately equal
-    if (Math.abs(rightLimit - leftLimit) < epsilon) {
-      return (rightLimit + leftLimit) / 2;
-    }
-    
-    return 'Limit does not exist';
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-// Define additional calculus tools
-ai.defineTool(
-  {
-    name: 'darboux_sum',
-    description: 'Calculate the Darboux sum of a function',
-    inputSchema: z.object({
-      expression: z.string().describe('Function to integrate'),
-      variable: z.string().describe('Variable of integration'),
-      a: z.number().describe('Lower limit of integration'),
-      b: z.number().describe('Upper limit of integration'),
-      n: z.number().describe('Number of subintervals'),
-      type: z.enum(['upper', 'lower']).default('upper')
-        .describe('Type: upper or lower Darboux sum')
-    }),
-    outputSchema: z.union([z.number(), z.string()]),
-  },
-  async ({ expression, variable, a, b, n, type }) => {
-    return darbouxSum(expression, variable, a, b, n, type);
-  }
+  async (args) => calculus.riemannSum(args.expression, args.variable, args.a, args.b, args.n, args.method)
 );
 
 ai.defineTool(
   {
     name: 'limit',
-    description: 'Calculate the limit of a function as it approaches a value',
+    description: 'Determine the limit of a function as a variable approaches a value.',
     inputSchema: z.object({
-      expression: z.string().describe('Function to evaluate limit'),
-      variable: z.string().describe('Variable approaching the limit'),
-      approach: z.number().describe('Value the variable approaches')
+      expression: z.string().describe('Expression'),
+      variable: z.string().describe('Variable'),
+      approach: z.number().describe('Value to approach')
     }),
     outputSchema: z.union([z.number(), z.string()]),
   },
-  async ({ expression, variable, approach }) => {
-    return findLimit(expression, variable, approach);
-  }
+  async (args) => calculus.findLimit(args.expression, args.variable, args.approach)
 );
 
 ai.defineTool(
   {
-    name: 'solve',
-    description: 'Solve an equation for a variable',
+    name: 'volume_of_revolution',
+    description: 'Calculate the volume of a solid of revolution around the x-axis using the disk method.',
     inputSchema: z.object({
-      expression: z.string().describe('Equation to solve (e.g., "x^2 = 4")'),
-      variable: z.string().describe('Variable to solve for')
+      expression: z.string().describe('Function f(x) to rotate'),
+      start: z.number().describe('Starting x-value'),
+      end: z.number().describe('Ending x-value'),
+      steps: z.number().optional().default(1000).describe('Precision steps (default 1000, max 100,000)')
     }),
-    outputSchema: z.array(z.string()),
+    outputSchema: z.number(),
   },
-  async ({ expression, variable }) => {
-    try {
-      // Convert equation to standard form (expression = 0)
-      const sides = expression.split('=').map(s => s.trim());
-      if (sides.length !== 2) {
-        throw new Error('Invalid equation format. Use "expression = value"');
-      }
-      
-      const equationNode = math.parse(`${sides[0]}-(${sides[1]})`);
-      const solutions = math.solve(equationNode, variable);
-      return solutions.map(sol => sol.toString());
-    } catch (e) {
-      return [`Error: ${e.message}`];
-    }
-  }
+  async (args) => utils.volumeOfRevolution(args.expression, args.start, args.end, args.steps)
 );
 
-// Engineering functions
-const laplaceTransform = (expr, t, s) => {
-  try {
-    const node = math.parse(expr);
-    // Using numerical integration for a basic approximation
-    const upperLimit = 100; // Approximation of infinity
-    const steps = 1000;
-    const dt = upperLimit / steps;
-    let result = math.complex(0, 0);
-    
-    for (let i = 0; i < steps; i++) {
-      const time = i * dt;
-      const scope = { [t]: time };
-      const ft = math.evaluate(node, scope);
-      const expTerm = math.exp(math.multiply(math.complex(-s, 0), time));
-      result = math.add(result, 
-        math.multiply(ft, expTerm, dt));
-    }
-    
-    return result.toString();
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
+// --- Linear Algebra Tools ---
 
-const fourierTransform = (expr, t, omega) => {
-  try {
-    const node = math.parse(expr);
-    // Using numerical integration for a basic approximation
-    const limit = 50; // Approximation of infinity
-    const steps = 1000;
-    const dt = (2 * limit) / steps;
-    let result = math.complex(0, 0);
-    
-    for (let i = 0; i < steps; i++) {
-      const time = -limit + i * dt;
-      const scope = { [t]: time };
-      const ft = math.evaluate(node, scope);
-      const expTerm = math.exp(
-        math.multiply(
-          math.complex(0, -1),
-          omega,
-          time
-        )
-      );
-      result = math.add(result, 
-        math.multiply(ft, expTerm, dt));
-    }
-    
-    return result.toString();
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-const zTransform = (expr, n, z, limit = 100) => {
-  try {
-    const node = math.parse(expr);
-    let result = math.complex(0, 0);
-    
-    for (let k = 0; k <= limit; k++) {
-      const scope = { [n]: k };
-      const fn = math.evaluate(node, scope);
-      const zTerm = math.pow(z, -k);
-      result = math.add(result, math.multiply(fn, zTerm));
-    }
-    
-    return result.toString();
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-// Engineering transform tools
 ai.defineTool(
   {
-    name: 'laplace_transform',
-    description: 'Calculate the Laplace transform of a function',
+    name: 'matrix_multiply',
+    description: 'Multiply two matrices. Input as arrays of arrays.',
     inputSchema: z.object({
-      expression: z.string().describe('Function of time'),
-      timeVar: z.string().describe('Time variable'),
-      laplaceVar: z.string().describe('Laplace variable')
+      a: z.array(z.array(z.number())),
+      b: z.array(z.array(z.number()))
     }),
-    outputSchema: z.string(),
+    outputSchema: z.array(z.array(z.number())),
   },
-  async ({ expression, timeVar, laplaceVar }) => {
-    return laplaceTransform(expression, timeVar, laplaceVar);
-  }
+  async ({ a, b }) => linalg.matrixMultiply(a, b)
 );
 
 ai.defineTool(
   {
-    name: 'fourier_transform',
-    description: 'Calculate the Fourier transform of a function',
+    name: 'matrix_inverse',
+    description: 'Find the inverse of a square matrix.',
     inputSchema: z.object({
-      expression: z.string().describe('Function of time'),
-      timeVar: z.string().describe('Time variable'),
-      freqVar: z.string().describe('Frequency variable')
+      m: z.array(z.array(z.number()))
     }),
-    outputSchema: z.string(),
+    outputSchema: z.array(z.array(z.number())),
   },
-  async ({ expression, timeVar, freqVar }) => {
-    return fourierTransform(expression, timeVar, freqVar);
-  }
+  async ({ m }) => linalg.matrixInverse(m)
 );
 
 ai.defineTool(
   {
-    name: 'z_transform',
-    description: 'Calculate the Z-transform of a function',
+    name: 'matrix_determinant',
+    description: 'Calculate the determinant of a square matrix.',
     inputSchema: z.object({
-      expression: z.string().describe('Function of discrete time'),
-      timeVar: z.string().describe('Discrete time variable'),
-      zVar: z.string().describe('Z-transform variable'),
-      limit: z.number().optional().describe('Upper limit for summation (default: 100)')
+      m: z.array(z.array(z.number()))
     }),
-    outputSchema: z.string(),
+    outputSchema: z.number(),
   },
-  async ({ expression, timeVar, zVar, limit = 100 }) => {
-    return zTransform(expression, timeVar, zVar, limit);
-  }
+  async ({ m }) => linalg.matrixDeterminant(m)
 );
 
-// Financial helper functions
-const normalCDF = (x) => {
-  const t = 1 / (1 + 0.2316419 * Math.abs(x));
-  const d = 0.3989423 * Math.exp(-x * x / 2);
-  const p = d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-  return x >= 0 ? 1 - p : p;
-};
+ai.defineTool(
+  {
+    name: 'eigenvalues',
+    description: 'Find the eigenvalues of a square matrix.',
+    inputSchema: z.object({
+      m: z.array(z.array(z.number()))
+    }),
+    outputSchema: z.array(z.number()),
+  },
+  async ({ m }) => linalg.eigenvalues(m)
+);
 
-const normalPDF = (x) => {
-  return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
-};
+// --- Finance Tools ---
 
-const blackScholes = (S, K, T, r, sigma, optionType = 'call') => {
-  try {
-    const d1 = (Math.log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - sigma * Math.sqrt(T);
-
-    if (optionType === 'call') {
-      return S * normalCDF(d1) - K * Math.exp(-r * T) * normalCDF(d2);
-    } else if (optionType === 'put') {
-      return K * Math.exp(-r * T) * normalCDF(-d2) - S * normalCDF(-d1);
-    } else {
-      throw new Error('Invalid option type. Must be "call" or "put".');
-    }
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-const optionGreeks = (S, K, T, r, sigma, optionType = 'call') => {
-  try {
-    const d1 = (Math.log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T));
-    const d2 = d1 - sigma * Math.sqrt(T);
-
-    let delta, gamma, vega, theta, rho;
-
-    if (optionType === 'call') {
-      delta = normalCDF(d1);
-      gamma = normalPDF(d1) / (S * sigma * Math.sqrt(T));
-      vega = S * normalPDF(d1) * Math.sqrt(T);
-      theta = -(S * normalPDF(d1) * sigma) / (2 * Math.sqrt(T)) - 
-             r * K * Math.exp(-r * T) * normalCDF(d2);
-      rho = K * T * Math.exp(-r * T) * normalCDF(d2);
-    } else if (optionType === 'put') {
-      delta = normalCDF(d1) - 1;
-      gamma = normalPDF(d1) / (S * sigma * Math.sqrt(T));
-      vega = S * normalPDF(d1) * Math.sqrt(T);
-      theta = -(S * normalPDF(d1) * sigma) / (2 * Math.sqrt(T)) + 
-             r * K * Math.exp(-r * T) * normalCDF(-d2);
-      rho = -K * T * Math.exp(-r * T) * normalCDF(-d2);
-    } else {
-      throw new Error('Invalid option type. Must be "call" or "put".');
-    }
-
-    return { delta, gamma, vega, theta, rho };
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-};
-
-// Define additional financial tools
 ai.defineTool(
   {
     name: 'black_scholes',
-    description: 'Calculate Black-Scholes option price',
+    description: 'Price a European option using Black-Scholes formula. Inputs: S (price), K (strike), T (years), r (rate), sigma (vol).',
     inputSchema: z.object({
-      S: z.number().describe('Current price of the asset'),
-      K: z.number().describe('Strike price of the option'),
-      T: z.number().describe('Time to expiration in years'),
-      r: z.number().describe('Risk-free interest rate'),
-      sigma: z.number().describe('Volatility of the asset'),
+      S: z.number().positive(),
+      K: z.number().positive(),
+      T: z.number().positive(),
+      r: z.number(),
+      sigma: z.number().positive(),
       optionType: z.enum(['call', 'put']).default('call')
-        .describe('Option type: "call" or "put"')
     }),
-    outputSchema: z.union([z.number(), z.string()]),
+    outputSchema: z.number(),
   },
-  async ({ S, K, T, r, sigma, optionType }) => {
-    return blackScholes(S, K, T, r, sigma, optionType);
-  }
+  async (args) => finance.blackScholes(args.S, args.K, args.T, args.r, args.sigma, args.optionType)
 );
 
 ai.defineTool(
   {
     name: 'option_greeks',
-    description: 'Calculate the Greeks for a Black-Scholes option',
+    description: 'Calculate Delta, Gamma, Vega, Theta, and Rho for an option.',
     inputSchema: z.object({
-      S: z.number().describe('Current price of the asset'),
-      K: z.number().describe('Strike price of the option'),
-      T: z.number().describe('Time to expiration in years'),
-      r: z.number().describe('Risk-free interest rate'),
-      sigma: z.number().describe('Volatility of the asset'),
+      S: z.number().positive(),
+      K: z.number().positive(),
+      T: z.number().positive(),
+      r: z.number(),
+      sigma: z.number().positive(),
       optionType: z.enum(['call', 'put']).default('call')
-        .describe('Option type: "call" or "put"')
     }),
-    outputSchema: z.union([
-      z.object({
-        delta: z.number(),
-        gamma: z.number(),
-        vega: z.number(),
-        theta: z.number(),
-        rho: z.number()
-      }),
-      z.string()
-    ]),
+    outputSchema: z.object({
+      delta: z.number(),
+      gamma: z.number(),
+      vega: z.number(),
+      theta: z.number(),
+      rho: z.number()
+    }),
   },
-  async ({ S, K, T, r, sigma, optionType }) => {
-    return optionGreeks(S, K, T, r, sigma, optionType);
+  async (args) => finance.optionGreeks(args.S, args.K, args.T, args.r, args.sigma, args.optionType)
+);
+
+ai.defineTool(
+  {
+    name: 'sharpe_ratio',
+    description: 'Calculate Sharpe ratio of a return series relative to a risk-free rate.',
+    inputSchema: z.object({
+      returns: z.array(z.number()).min(2).describe('Array of percentage returns'),
+      riskFreeRate: z.number().optional().default(0).describe('Periodic risk-free rate')
+    }),
+    outputSchema: z.number(),
+  },
+  async ({ returns, riskFreeRate }) => finance.sharpeRatio(returns, riskFreeRate)
+);
+
+ai.defineTool(
+  {
+    name: 'value_at_risk',
+    description: 'Estimate Value at Risk (VaR) using historical method at a given confidence level.',
+    inputSchema: z.object({
+      returns: z.array(z.number()).min(10).describe('Historical returns data'),
+      confidence: z.number().min(0.5).max(0.999).default(0.95).describe('Confidence level (e.g. 0.95)')
+    }),
+    outputSchema: z.number(),
+  },
+  async ({ returns, confidence }) => finance.valueAtRisk(returns, confidence)
+);
+
+ai.defineTool(
+  {
+    name: 'cashflow_schedule',
+    description: 'Generate a periodic interest/balance schedule for a principal amount.',
+    inputSchema: z.object({
+      principal: z.number().positive(),
+      rate: z.number().nonnegative().describe('Rate per period (as decimal)'),
+      periods: z.number().int().positive().describe('Number of periods'),
+      compounds: z.number().optional().default(1).describe('Compounds per period')
+    }),
+    outputSchema: z.array(z.object({
+      period: z.number(),
+      interest: z.number(),
+      balance: z.number()
+    })),
+  },
+  async (args) => finance.cashflowSchedule(args.principal, args.rate, args.periods, args.compounds)
+);
+
+// --- Probability Tools ---
+
+ai.defineTool(
+  {
+    name: 'normal_distribution',
+    description: 'Evaluate Normal PDF at x given mean mu and std sigma.',
+    inputSchema: z.object({
+      x: z.number(),
+      mu: z.number().optional().default(0),
+      sigma: z.number().optional().default(1)
+    }),
+    outputSchema: z.number(),
+  },
+  async ({ x, mu, sigma }) => prob.normalDistribution(x, mu, sigma)
+);
+
+ai.defineTool(
+  {
+    name: 'binomial_distribution',
+    description: 'Calculate binomial probability P(X=k) for n trials and success prob p.',
+    inputSchema: z.object({
+      k: z.number().int().nonnegative(),
+      n: z.number().int().positive(),
+      p: z.number().min(0).max(1)
+    }),
+    outputSchema: z.number(),
+  },
+  async ({ k, n, p }) => prob.binomialDistribution(k, n, p)
+);
+
+ai.defineTool(
+  {
+    name: 'poisson_distribution',
+    description: 'Calculate Poisson probability P(X=k) for rate lambda.',
+    inputSchema: z.object({
+      k: z.number().int().nonnegative(),
+      lambda: z.number().positive()
+    }),
+    outputSchema: z.number(),
+  },
+  async ({ k, lambda }) => prob.poissonDistribution(k, lambda)
+);
+
+// --- Engineering Transforms ---
+
+ai.defineTool(
+  {
+    name: 'laplace_transform',
+    description: 'Numerical approximation of the Laplace transform of a function f(t).',
+    inputSchema: z.object({
+      expression: z.string().describe('f(t)'),
+      timeVar: z.string().default('t'),
+      laplaceVar: z.number().describe('s (complex or real frequency)')
+    }),
+    outputSchema: z.string(),
+  },
+  async (args) => transform.laplaceTransform(args.expression, args.timeVar, args.laplaceVar)
+);
+
+ai.defineTool(
+  {
+    name: 'fourier_transform',
+    description: 'Numerical approximation of the Fourier transform of a function f(t).',
+    inputSchema: z.object({
+      expression: z.string().describe('f(t)'),
+      timeVar: z.string().default('t'),
+      freqVar: z.number().describe('omega (frequency)')
+    }),
+    outputSchema: z.string(),
+  },
+  async (args) => transform.fourierTransform(args.expression, args.timeVar, args.freqVar)
+);
+
+// --- Optimization Tools ---
+
+ai.defineTool(
+  {
+    name: 'find_root',
+    description: 'Find root of f(x)=0 using Newton method. Provide expression, variable, and initial guess.',
+    inputSchema: z.object({
+      expression: z.string().describe('f(x)'),
+      variable: z.string().default('x'),
+      guess: z.number()
+    }),
+    outputSchema: z.number(),
+  },
+  async (args) => optim.findRoot(args.expression, args.variable, args.guess)
+);
+
+// --- Discovery Tool ---
+
+ai.defineTool(
+  {
+    name: 'describe_available_tools',
+    description: 'Find the right tool for your math or finance problem. Describe your goal in natural language.',
+    inputSchema: z.object({
+      task: z.string().describe('What you want to calculate (e.g. "solve x^2=4", "price a call option")')
+    }),
+    outputSchema: z.object({
+      suggestedTools: z.array(z.string()),
+      reasoning: z.string()
+    }),
+  },
+  async ({ task }) => {
+    const suggestions = [];
+    const t = task.toLowerCase();
+    if (t.includes('derivative') || t.includes('slope')) suggestions.push('derivative');
+    if (t.includes('integral') || t.includes('area')) suggestions.push('integral', 'riemann_sum');
+    if (t.includes('volume') || t.includes('revolution')) suggestions.push('volume_of_revolution');
+    if (t.includes('matrix') || t.includes('inverse') || t.includes('multiply')) suggestions.push('matrix_multiply', 'matrix_inverse', 'matrix_determinant');
+    if (t.includes('eigen')) suggestions.push('eigenvalues');
+    if (t.includes('option') || t.includes('black') || t.includes('greek')) suggestions.push('black_scholes', 'option_greeks');
+    if (t.includes('sharpe') || t.includes('risk')) suggestions.push('sharpe_ratio', 'value_at_risk');
+    if (t.includes('cash') || t.includes('schedule') || t.includes('interest')) suggestions.push('cashflow_schedule', 'compound_interest');
+    if (t.includes('prob') || t.includes('distrib') || t.includes('normal') || t.includes('poisson') || t.includes('binom')) suggestions.push('normal_distribution', 'binomial_distribution', 'poisson_distribution');
+    if (t.includes('laplace') || t.includes('fourier')) suggestions.push('laplace_transform', 'fourier_transform');
+    if (t.includes('root') || t.includes('solve')) suggestions.push('find_root');
+    
+    return {
+      suggestedTools: suggestions.length > 0 ? suggestions : ['all'],
+      reasoning: suggestions.length > 0 ? `Detected keywords for: ${suggestions.join(', ')}.` : "No specific keywords found. You can use any of the available specialized math tools."
+    };
   }
 );
 
-const server = mcpServer(ai, { name: 'genkit_mcp', version: '0.1.0' });
+// --- Pipeline Tools ---
+
+ai.defineTool(
+  {
+    name: 'evaluate_pipeline',
+    description: 'Execute a sequence of mathematical operations where the result of one can be used in the next using "$LAST".',
+    inputSchema: z.object({
+      operations: z.array(z.object({
+        op: z.string().describe('Operation type (currently only "math" supported)'),
+        args: z.any().describe('Arguments for the operation (e.g., {expression: "x + 1", scope: {x: 5}})')
+      }))
+    }),
+    outputSchema: z.object({
+      lastResult: z.any(),
+      results: z.array(z.any())
+    }),
+  },
+  async ({ operations }) => pipelines.evaluateChain(operations)
+);
+
+// Final Server Config
+const server = mcpServer(ai, { 
+  name: 'mcp-calc-tools-advanced', 
+  version: '1.1.0',
+  description: 'High-performance calculus, finance, linear algebra, and probability MCP server.'
+});
 server.start();
 
-// Log when server starts
-console.log('Genkit MCP server started. Waiting for connections...');
+console.log('MCP Calc Tools Advanced server is live.');

@@ -1,103 +1,92 @@
 # MCP Calc Tools
 
-A Model Context Protocol (MCP) server that provides advanced mathematical and financial calculation tools for integration with AI code assistants like Cline and Roo Code.
+<div align="center">
+  <hr width="50%">
+  <h3>Support This Project</h3>
+  <div style="display: flex; justify-content: center; gap: 20px; margin: 20px 0;">
+    <div>
+      <h4>Stripe</h4>
+      <img src="qr-stripe-donation.png" alt="Scan to donate" width="180"/>
+      <p><a href="https://raw.githubusercontent.com/nbiish/license-for-all-works/8e9b73b269add9161dc04bbdd79f818c40fca14e/qr-stripe-donation.png">Donate via Stripe</a></p>
+    </div>
+    <div style="display: flex; align-items: center;">
+      <a href="https://www.buymeacoffee.com/nbiish"><img src="buy-me-a-coffee.png" alt="Buy me a coffee" /></a>
+    </div>
+  </div>
+  <hr width="50%">
+</div>
 
-## Overview
-
-MCP Calc Tools exposes mathematical computation capabilities through a standardized interface that AI assistants can interact with. This enables AI tools to perform complex calculations without having to implement mathematical algorithms directly.
+Advanced calculus, linear algebra, probability, and finance tools for AI agents, exposed via the Model Context Protocol (MCP).
 
 ## Features
 
-### Mathematical Tools
-- **Symbolic Calculus**
-  - `derivative`: Calculate symbolic derivatives of expressions
-  - `integral`: Compute symbolic integrals
-  - `limit`: Evaluate limits as variables approach specified values
-  - `solve`: Solve equations for specific variables
-
-### Numerical Methods
-- `riemann_sum`: Calculate definite integrals using Riemann sums with multiple methods (left, right, midpoint, trapezoid)
-- `darboux_sum`: Calculate upper and lower Darboux sums for integral approximation
-- `area`: Calculate the area under a curve between two points
-- `volume`: Calculate volume of revolution around x-axis
-
-### Mathematical Transforms
-- `laplace_transform`: Calculate Laplace transforms of functions
-- `fourier_transform`: Calculate Fourier transforms of functions
-- `z_transform`: Calculate Z-transforms of discrete-time functions
-
-### Financial Tools
-- `compound_interest`: Calculate compound interest with customizable compounding periods
-- `present_value`: Calculate present value of future cash flows
-- `npv`: Calculate Net Present Value of cash flow series
-- `black_scholes`: Calculate option prices using the Black-Scholes model
-- `option_greeks`: Calculate option Greeks (delta, gamma, vega, theta, rho)
-
-### Utility Functions
-- `logarithm`: Calculate logarithm with any base
-- `exponential`: Calculate exponential function (e^x)
+- **Calculus**: Symbolic derivatives/integrals, numerical Riemann sums, limits, volumes of revolution.
+- **Linear Algebra**: Matrix multiplication, inversion, determinants, eigenvalues.
+- **Finance**: Black-Scholes pricing, Option Greeks, Sharpe Ratio, Value at Risk (VaR), Cashflow schedules.
+- **Probability**: Normal, Binomial, and Poisson distributions.
+- **Engineering**: Numerical Laplace and Fourier transforms.
+- **Optimization**: Newton-method root finding.
+- **Meta-Tools**: `describe_available_tools` for agent discovery.
 
 ## Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/mcp-calc-tools.git
+### For AI Agents (Claude Code, Cursor, Cline, Roo Code)
 
-# Navigate to project directory
-cd mcp-calc-tools
+Add the following to your MCP configuration:
 
-# Install dependencies
-npm install
-# or
-pnpm install
+```json
+{
+  "mcpServers": {
+    "calc-tools": {
+      "command": "node",
+      "args": ["/path/to/mcp-calc-tools/index.js"],
+      "env": {}
+    }
+  }
+}
 ```
 
-## Usage
+## Usage Examples for Agents
 
-### Starting the MCP server
+### Calculus
+- "Calculate the derivative of x^2 + sin(x)"
+- "Find the area under x^3 from 0 to 2 using 1000 trapezoids"
 
-```bash
-# Make the script executable (if needed)
-chmod +x index.js
+### Finance
+- "Price a European call option with S=100, K=105, T=0.5, r=0.03, sigma=0.2"
+- "Generate a monthly cashflow schedule for a $10,000 loan at 5% interest for 1 year"
 
-# Run the server
-npm start
-# or
-node index.js
-```
+### Linear Algebra
+- "Find the eigenvalues of the matrix [[1, 2], [3, 4]]"
 
-### Integrating with AI Assistants
+## Security & Reliability
 
-To use MCP Calc Tools with AI coding assistants:
-
-1. Configure your AI assistant (Cline/Roo Code) to use the MCP server
-2. Set the server URL to your running instance
-3. The AI assistant will now have access to all the mathematical tools
-
-Example request to calculate a derivative:
-```
-Calculate the derivative of x^2*sin(x)
-```
-
-## Requirements
-
-- Node.js v14 or higher
-- Required packages:
-  - genkit (^1.0.5)
-  - genkitx-mcp (^1.0.5)
-  - mathjs (^12.0.0)
+- **Safe Evaluation**: Uses `mathjs` for expression parsing, avoiding dangerous `eval()`.
+- **Input Validation**: All parameters are strictly validated via Zod.
+- **Safety Caps**: Numerical methods have hard caps on iterations and subintervals to prevent DoS.
+- **CVE Fixes**: Dependencies updated to address known vulnerabilities (e.g., `qs`).
 
 ## Development
 
-The project is structured as follows:
+```bash
+pnpm install
+pnpm start
+```
 
-- index.js: Main server implementation with all tool definitions
-- package.json: Project dependencies and script definitions
+## Citation
+
+```bibtex
+@misc{mcp-calc-tools2025,
+  author/creator/steward = {ᓂᐲᔥ ᐙᐸᓂᒥᑮ-ᑭᓇᐙᐸᑭᓯ (Nbiish Waabanimikii-Kinawaabakizi), also known legally as JUSTIN PAUL KENWABIKISE, professionally documented as Nbiish-Justin Paul Kenwabikise, Anishinaabek Dodem (Anishinaabe Clan): Animikii (Thunder), descendant of Chief ᑭᓇᐙᐸᑭᓯ (Kinwaabakizi) of the Beaver Island Band and enrolled member of the sovereign Grand Traverse Band of Ottawa and Chippewa Indians},
+  title/description = {mcp-calc-tools},
+  type_of_work = {Indigenous digital creation/software incorporating traditional knowledge and cultural expressions},
+  year = {2025},
+  publisher/source/event = {GitHub repository under tribal sovereignty protections},
+  howpublished = {\url{https://github.com/nbiish/mcp-calc-tools}},
+  note = {Authored and stewarded by ᓂᐲᔥ ᐙᐸᓂᒥᑮ-ᑭᓇᐙᐸᑭᓯ (Nbiish Waabanimikii-Kinawaabakizi), also known legally as JUSTIN PAUL KENWABIKISE, professionally documented as Nbiish-Justin Paul Kenwabikise, Anishinaabek Dodem (Anishinaabe Clan): Animikii (Thunder), descendant of Chief ᑭᓇᐙᐸᑭᓯ (Kinwaabakizi) of the Beaver Island Band and enrolled member of the sovereign Grand Traverse Band of Ottawa and Chippewa Indians. This work embodies Indigenous intellectual property, traditional knowledge systems (TK), traditional cultural expressions (TCEs), and associated data protected under tribal law, federal Indian law, treaty rights, Indigenous Data Sovereignty principles, and international indigenous rights frameworks including UNDRIP. All usage, benefit-sharing, and data governance are governed by the COMPREHENSIVE RESTRICTED USE LICENSE FOR INDIGENOUS CREATIONS WITH TRIBAL SOVEREIGNTY, DATA SOVEREIGNTY, AND WEALTH RECLAMATION PROTECTIONS.}
+}
+```
 
 ## License
 
-[Add your license information here]
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+Copyright © 2025 ᓂᐲᔥ ᐙᐸᓂᒥᑮ-ᑭᓇᐙᐸᑭᓯ (Nbiish Waabanimikii-Kinawaabakizi), also known legally as JUSTIN PAUL KENWABIKISE, professionally documented as Nbiish-Justin Paul Kenwabikise, Anishinaabek Dodem (Anishinaabe Clan): Animikii (Thunder), a descendant of Chief ᑭᓇᐙᐸᑭᓯ (Kinwaabakizi) of the Beaver Island Band, and an enrolled member of the sovereign Grand Traverse Band of Ottawa and Chippewa Indians. This work embodies Traditional Knowledge and Traditional Cultural Expressions. All rights reserved.

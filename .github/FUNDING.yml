@@ -1,0 +1,9 @@
+# GitHub Sponsors and funding platforms for Nbiish's repositories
+# This file enables the "Sponsor" button on GitHub repositories
+
+github: [nbiish]  # GitHub Sponsors username
+ko_fi: nbiish     # Ko-fi username
+custom: [
+  "https://raw.githubusercontent.com/nbiish/license-for-all-works/8e9b73b269add9161dc04bbdd79f818c40fca14e/qr-stripe-donation.png",
+  "https://www.buymeacoffee.com/nbiish"
+]

@@ -1,24 +1,111 @@
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# AINISH Coder Tooling Distribution - Git Ignore Patterns
+
+# ai pair programmer files
+.cursor/
+.cursorrules
+.github/copilot-instructions.md
+.github/instructions/*
+.gemini/
+.qwen/
+.claude/
+.continue/
+.clinerules/
+.windsurf/
+.aider*
+.trae/
+docs/
+
+# Environment and configuration files
 .env
-.venv
+.env.*
+!.env.example
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# Virtual environments
 venv/
+venv.bak/
+venv.bak*
+venv.*
+.venv/
 ENV/
+env/
+.conda/
+.python-version
+*/.env
+*/*env.*
+!*env.example
+
+# IDE and editor files
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+
+# Security and secrets
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.csr
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+.secrets
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Backup files
+*.bak
+*.backup
+*.backup.*
+*.old
+*.orig
+*.rej
+*.orig
+*.swp
+*.swo
+
+# Rust
+target/
+
+# Python
+__pycache__/
+*.pyc
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# Shared Libraries
+*.so
+*.dylib
+*.dll
+
+# General
+*.log
+*.tmp
+*.new
+tmp/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Security reports
+SECURITY_REPORT.md
