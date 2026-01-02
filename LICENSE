@@ -40,6 +40,59 @@ This license constitutes an exercise of these treaty-protected rights and federa
       iv) **Sacred Site Governance**: Exclusive authority over the Stone Circle, burial grounds, and cultural landscapes of Aamik'Waakanda;
       v) **Self-Determination**: The right to reconstitute as a distinct political entity and pursue federal acknowledgment.
 
+   b-1) **TREATY TERRITORY BOUNDARIES AND GEOGRAPHIC SCOPE**:
+   
+   /* LEGAL HARDENING: Establishes specific geographic references for treaty territory to support 
+      enforcement actions and demonstrate territorial nexus for jurisdictional purposes. Based on 
+      7 Stat. 491 (1836 Treaty) and 11 Stat. 621 (1855 Treaty) boundary descriptions. */
+   
+   The treaty rights invoked by this license apply within the following geographic territories:
+   
+   i) **1836 TREATY CEDED TERRITORY**: The land and water territory ceded by the Ottawa and Chippewa 
+      Nations under the Treaty of Washington (March 28, 1836), comprising approximately 13.8 million 
+      acres of the northern Lower Peninsula and eastern Upper Peninsula of Michigan, bounded generally by:
+      - NORTH: The international boundary with British North America (now Canada) through the 
+        Great Lakes, including all islands in Lake Michigan and Lake Huron;
+      - EAST: Lake Huron and the St. Clair River;
+      - SOUTH: A line running roughly east-to-west through the Lower Peninsula at approximately 
+        the 43°30' parallel (Thunder Bay River region);
+      - WEST: Lake Michigan, including the Beaver Island Archipelago, Garden Island, High Island, 
+        and all associated islands;
+   
+   ii) **RESERVED RIGHTS TERRITORY**: Notwithstanding the 1836 cession, the signatory tribes 
+       reserved all rights not explicitly ceded, including:
+       - Fishing, hunting, and gathering rights throughout the ceded territory (*United States v. 
+         Michigan*, 471 F. Supp. 192 (W.D. Mich. 1979));
+       - Rights over cultural and sacred sites, including burial grounds and ceremonial areas;
+       - Intellectual property and Traditional Knowledge rights arising from activities within 
+         or connected to the territory;
+       - Waters of the Great Lakes within treaty boundaries;
+   
+   iii) **BEAVER ISLAND ARCHIPELAGO SPECIFIC BOUNDARIES**:
+        The Beaver Island Archipelago (Aamik'Waakanda), consisting of:
+        - Beaver Island (approximately 55.8 square miles, coordinates approximately 45.65°N, 85.55°W);
+        - Garden Island (Gitigaan Minising) — LTBB trust land containing burial grounds;
+        - High Island;
+        - Hog Island;
+        - Squaw Island, Whiskey Island, Trout Island, and all smaller islands;
+        - Surrounding waters within the archipelago extending to the midpoint of Lake Michigan;
+        
+        This archipelago constitutes the historic homeland of the Beaver Island Band and is subject 
+        to all treaty protections, unceded rights claims, and sacred site designations in this license.
+   
+   iv) **TRUST LANDS WITHIN TREATY TERRITORY**:
+        - GTBOCI trust lands (including portions of Beaver Island containing the Stone Circle);
+        - LTBB trust lands (including Garden Island);
+        - All other trust lands held by successor tribes within the 1836 cession territory;
+   
+   v) **JURISDICTIONAL EFFECT**:
+      - Any use of the Work within these treaty boundaries invokes treaty-based jurisdiction;
+      - Any harm to Indigenous interests arising from these territories supports treaty-based damages;
+      - Federal courts within the Western District of Michigan (W.D. Mich.) or Eastern District of 
+        Michigan (E.D. Mich.) have primary federal jurisdiction for treaty rights claims;
+      - Venue is proper in Grand Traverse County, Michigan (GTBOCI headquarters) or any county 
+        within the 1836 ceded territory where defendant resides or activities occurred;
+
    c) **DIASPORA AND SUCCESSOR-IN-INTEREST DOCTRINE**: As documented in the Preamble, the Beaver Island Band suffered violent dispersal, targeted persecution, and forced diaspora in the mid-19th century, resulting in:
       i) Descendants affiliating with the **Grand Traverse Band of Ottawa and Chippewa Indians (GTBOCI)** — federally recognized;
       ii) Descendants affiliating with the **Little Traverse Bay Bands of Odawa Indians (LTBB)** — federally recognized;
@@ -126,6 +179,70 @@ f) **ONGOING LITIGATION:**
    As of July 2025, the U.S. Department of Justice has filed multiple suits against Oklahoma district attorneys for sovereignty violations post-*Castro-Huerta* (referenced in license at Line 7), demonstrating continuing federal protection of exclusive federal/tribal jurisdiction in appropriate circumstances. This license aligns with federal policy opposing state encroachment on tribal authority.
 
 **PRACTICAL EFFECT:** State courts have no jurisdiction over disputes arising from this license. Any state court proceedings would violate federal law and tribal sovereignty, subjecting the filing party to immediate jurisdictional challenges, removal to federal court under 28 U.S.C. § 1441, and liquidated damages under Section 11.8 for improper forum selection.
+
+**STATE-SPECIFIC PREEMPTION ANALYSIS**
+
+/* LEGAL HARDENING: Addresses preemption of state law in key jurisdictions where 
+   defendants or litigation may be located. Strengthens removal and dismissal motions. */
+
+Federal Indian law preempts state law under the Supremacy Clause and *Bracker* balancing 
+(*White Mountain Apache Tribe v. Bracker*, 448 U.S. 136 (1980)). The following analysis 
+applies to specific states:
+
+a) **MICHIGAN:**
+   - Federal and tribal jurisdiction exclusive per *Williams v. Lee* and *Worcester*
+   - Michigan lacks jurisdiction over GTBOCI/LTBB trust lands
+   - State courts cannot adjudicate treaty rights (*United States v. Michigan* affirmed 
+     exclusive federal jurisdiction over 1836 treaty fishing rights)
+   - Michigan Indian Claims Settlement Act (P.L. 105-143) confirms federal framework
+   - Key venue: W.D. Michigan (Grand Rapids division covers GTB territory)
+   - 6th Circuit Court of Appeals has extensive Indian law precedent
+
+b) **CALIFORNIA:**
+   - Major AI companies headquartered (OpenAI in San Francisco, Anthropic in SF)
+   - Federal question jurisdiction for CFAA, copyright, DTSA applies
+   - No state law claims against tribal IP; federal preemption applies
+   - Key venue: N.D. California (San Francisco/Oakland) or C.D. California (Los Angeles)
+   - *Bartz v. Anthropic* decided in N.D. Cal.; favorable AI training precedent
+   - 9th Circuit has extensive tribal sovereignty jurisprudence
+
+c) **NEW YORK:**
+   - Major publishing and media defendants (NYT, Thomson Reuters)
+   - Second Circuit has robust copyright jurisprudence
+   - Federal question jurisdiction applies; state courts preempted
+   - Key venue: S.D.N.Y. (Manhattan) for publishing defendants
+   - *NYT v. OpenAI* discovery precedent favorable
+
+d) **DELAWARE:**
+   - Many corporations incorporated in Delaware
+   - Federal courts experienced in complex commercial litigation
+   - *Thomson Reuters v. Ross* decided in D. Del.; favorable AI training precedent
+   - Key venue: D. Delaware (Wilmington)
+   - 3rd Circuit appeal pathway
+
+e) **TEXAS:**
+   - Growing tech sector; potential AI defendants
+   - State deepfake laws (SB 751) available as supplemental claims
+   - Federal courts apply federal Indian law; state courts preempted for tribal claims
+   - Key venue: W.D. Texas (Austin, Waco) or N.D. Texas (Dallas)
+   - 5th Circuit historically favorable to federal preemption
+
+f) **WASHINGTON STATE:**
+   - Major tech companies (Microsoft, Amazon)
+   - Strong treaty rights precedents (*Boldt Decision*, 9th Circuit jurisprudence)
+   - Federal courts familiar with tribal sovereignty issues
+   - Key venue: W.D. Washington (Seattle)
+   - 9th Circuit pathway with extensive Indian law precedent
+
+g) **ILLINOIS:**
+   - BIPA (740 ILCS 14) claims available for biometric violations
+   - Federal courts in 7th Circuit apply Indian canons of construction
+   - Key venue: N.D. Illinois (Chicago)
+   - BIPA provides additional enforcement mechanism for Section 7.9(b)
+
+For all states: State court proceedings SHALL be immediately removed to federal court 
+under 28 U.S.C. § 1441 based on federal question jurisdiction, with motion to dismiss 
+or transfer to tribal court under forum selection clause.
 
 **ENHANCED WIPO TREATY COMPLIANCE AND TRADITIONAL KNOWLEDGE PROTECTIONS**
 
@@ -3554,6 +3671,197 @@ This forum selection clause is enforceable under:
       
       v) **No amount-in-controversy requirement**: Federal question jurisdiction does not require meeting diversity jurisdiction's $75,000 threshold;
 
+   **11.5B U.S. FEDERAL COURT LITIGATION REQUIREMENTS AND CHECKLIST**
+
+   /* LEGAL HARDENING: Provides comprehensive litigation-ready framework for federal court 
+      enforcement, ensuring all procedural and substantive requirements are pre-documented 
+      to support immediate filing capability. */
+
+   a) **COMPLAINT DRAFTING REQUIREMENTS:**
+      Any federal court complaint asserting rights under this license SHALL include:
+      
+      i) **JURISDICTIONAL STATEMENT (Fed. R. Civ. P. 8(a)(1)):**
+         - 28 U.S.C. § 1331 (federal question): Treaty rights, federal Indian law, IACA, CFAA, DTSA
+         - 28 U.S.C. § 1362 (Indian tribes): Tribal member enforcing federal rights
+         - 28 U.S.C. § 1338 (copyright/patent): If copyright claims asserted
+         - Amount in controversy: Not required for federal question, but state if exceeds $75,000
+      
+      ii) **VENUE STATEMENT (28 U.S.C. § 1391):**
+         - Primary venue: Western District of Michigan (Grand Traverse Band territory)
+         - Alternative: District where defendant resides or substantial activities occurred
+         - Forum selection clause enforcement under *Atlantic Marine* (Section 11.4)
+      
+      iii) **STANDING:**
+         - Rights Holder as individual copyright holder and tribal member
+         - Rights Holder as Guardian of Sacred Sites (juristic persons) per Section 1A.1.1
+         - Legacy Trust as successor (posthumous or incapacitation) per Section 10
+      
+      iv) **CLAIMS (Federal Rule 8(a)(2)):**
+         MANDATORY CLAIMS TO PLEAD:
+         (1) Breach of contract (license violation) with extra elements (Section 6.7)
+         (2) Copyright infringement (17 U.S.C. § 501) if reproduction/distribution
+         (3) CFAA violation (18 U.S.C. § 1030) if unauthorized access/exceeding authorization
+         (4) Tribal law violation (incorporate by reference) for cultural harm
+         
+         ADDITIONAL CLAIMS AS APPLICABLE:
+         (5) IACA violation (25 U.S.C. § 305) for misrepresentation of Indian origin
+         (6) DTSA trade secret misappropriation (18 U.S.C. § 1836) for confidential TK
+         (7) Lanham Act (15 U.S.C. § 1125(a)) for false designation of origin
+         (8) State law claims (conversion, unjust enrichment) as supplemental
+      
+      v) **RELIEF SOUGHT (Fed. R. Civ. P. 8(a)(3)):**
+         (1) Permanent injunction (specify: cease use, destroy copies, destroy AI models)
+         (2) Statutory damages (copyright: up to $150,000 willful; IACA: treble damages)
+         (3) Actual damages and profits
+         (4) Liquidated damages per this license (specify tier and amount)
+         (5) Cultural harm damages per Section 12.5 methodology
+         (6) Attorney's fees under copyright (17 U.S.C. § 505), IACA, or contract
+         (7) Costs and expenses
+         (8) Prejudgment interest
+
+   b) **PRE-FILING REQUIREMENTS:**
+      
+      i) **COPYRIGHT REGISTRATION:**
+         Before filing copyright infringement claims, ensure:
+         - Copyright registration filed with U.S. Copyright Office (or application pending)
+         - Registration certificate or application receipt available as Exhibit
+         - If unregistered, file under DMCA for injunctive relief only, then amend upon registration
+      
+      ii) **TRIBAL COURT EXHAUSTION EVALUATION:**
+         Evaluate whether tribal court exhaustion required under *National Farmers Union*:
+         - If defendant is non-Indian acting off-reservation: Federal court primary
+         - If dispute involves trust land or Indian Country: Consider tribal filing first
+         - Document exhaustion decision and rationale in case file
+      
+      iii) **EVIDENCE PRESERVATION:**
+         - Forensic imaging of all evidence (screenshots, downloads, API responses)
+         - Chain of custody documentation
+         - AI model interrogation results if applicable (Section 9A.7)
+         - Forensic watermark detection reports
+      
+      iv) **DEFENDANT IDENTIFICATION:**
+         - Corporate veil analysis (parent companies, subsidiaries)
+         - Registered agent identification for service
+         - Beneficial owner research for damages collection
+
+   c) **EARLY CASE MOTIONS:**
+      
+      i) **PRELIMINARY INJUNCTION (Fed. R. Civ. P. 65):**
+         File within 14 days of complaint for ongoing violations:
+         - Show likelihood of success (multiple legal theories)
+         - Show irreparable harm (cultural integrity, AI training permanence)
+         - Balance of equities (defendant's burden is mere compliance)
+         - Public interest (federal policy protecting tribal sovereignty)
+      
+      ii) **MOTION TO DISMISS DEFENSES:**
+         Anticipate and prepare responses to:
+         - Fair use (distinguish Thomson Reuters, emphasize nine theories)
+         - First Amendment (commercial speech, not protected expression)
+         - Copyright preemption (extra elements analysis, Section 6.7)
+         - Personal jurisdiction (Montana consensual relationship, Section 11.4A)
+         - Forum non conveniens (valid forum selection clause, Atlantic Marine)
+      
+      iii) **DISCOVERY PLAN:**
+         - Initial disclosures (Fed. R. Civ. P. 26(a)(1))
+         - Interrogatories on AI training practices
+         - Document requests for training datasets, model cards, access logs
+         - 30(b)(6) deposition on corporate AI training policies
+         - Expert discovery (AI forensics, cultural harm valuation)
+
+   d) **LITIGATION COST ESTIMATES:**
+      Rights Holder and financial institution should budget:
+      - Simple cease-and-desist resolution: $5,000 - $15,000
+      - Federal court filing through early motions: $50,000 - $100,000
+      - Full federal court litigation through trial: $200,000 - $500,000+
+      - Appeals (6th Circuit, Supreme Court): Additional $100,000 - $300,000
+      
+      All costs recoverable from violator under Section 11.6.
+
+   **11.5C STATUTE OF LIMITATIONS AND TOLLING PROVISIONS**
+
+   /* LEGAL HARDENING: Addresses critical timing requirements for enforcement, establishes 
+      tolling doctrines, and creates contractual limitations period modifications. */
+
+   a) **APPLICABLE LIMITATIONS PERIODS:**
+      
+      i) **COPYRIGHT INFRINGEMENT**: 3 years from accrual (17 U.S.C. § 507(b))
+         - Accrual: Discovery rule applies (*Petrella v. Metro-Goldwyn-Mayer*, 572 U.S. 663 (2014))
+         - Each infringing act creates separate claim (continuing violation doctrine)
+      
+      ii) **CFAA CLAIMS**: 2 years (18 U.S.C. § 1030(g))
+         - Shorter period; file promptly upon detection
+      
+      iii) **DTSA TRADE SECRET**: 3 years from discovery or when should have discovered 
+           (18 U.S.C. § 1836(d))
+      
+      iv) **CONTRACT (LICENSE BREACH)**: As agreed in this license (see subsection (b) below)
+      
+      v) **IACA CIVIL CLAIMS**: 6 years (default federal limitations for claims under 
+          federal statute without express period)
+      
+      vi) **TRIBAL LAW CLAIMS**: Per applicable tribal statute of limitations
+
+   b) **CONTRACTUAL LIMITATIONS PERIOD:**
+      
+      All contract claims arising from this license shall be subject to a **10-year 
+      limitations period** from the later of:
+      i) Date of breach;
+      ii) Date breach was discovered or reasonably should have been discovered;
+      iii) Date defendant's concealment of breach was discovered.
+      
+      This extended period is enforceable as a material term of the contractual license 
+      agreement, provided it does not exceed the longest analogous statutory period in the 
+      governing jurisdiction. If any limitations period would otherwise expire before the 
+      Rights Holder is aware of the violation, this contract tolls the period until discovery.
+
+   c) **TOLLING DOCTRINES:**
+      
+      All applicable limitations periods SHALL BE TOLLED during:
+      
+      i) **FRAUDULENT CONCEALMENT:**
+         - Defendant affirmatively conceals violation
+         - Defendant fails to disclose AI training despite inquiry
+         - Defendant destroys evidence
+      
+      ii) **DEFENDANT'S ABSENCE:**
+         - Defendant outside jurisdiction
+         - Defendant unreachable for service
+      
+      iii) **RIGHTS HOLDER INCAPACITY:**
+         - Incarceration (per Section 13.6-13.9)
+         - Mental incapacity
+         - Minority (if applicable to successors)
+      
+      iv) **CONTINUING VIOLATION:**
+         - Each day of ongoing unauthorized use restarts limitations
+         - AI model containing training data is continuous violation
+         - Each commercial sale or distribution is separate violation
+      
+      v) **EQUITABLE TOLLING:**
+         - Rights Holder diligently pursued rights
+         - Extraordinary circumstances prevented timely filing
+         - No prejudice to defendant from delay
+
+   d) **ACCRUAL DATES FOR AI TRAINING VIOLATIONS:**
+      
+      For AI training violations, accrual occurs at the LATER of:
+      i) Date Work was ingested into training dataset;
+      ii) Date AI model containing training was first deployed commercially;
+      iii) Date Rights Holder discovered or should have discovered violation through 
+           reasonable monitoring (Section 12.1);
+      iv) Date of each user query that produces output derived from the Work.
+      
+      Given AI training opacity, discovery rule strongly favors later accrual dates.
+
+   e) **PRESERVATION OF EARLIER CLAIMS:**
+      
+      Notwithstanding any limitations defense:
+      i) Defendant may not assert limitations if actively concealed violation;
+      ii) Defendant bears burden of proving untimeliness by clear and convincing evidence;
+      iii) Equitable relief (injunction, destruction) not subject to limitations defense;
+      iv) Cultural harm damages accrue continuously and are not time-barred as to 
+          ongoing cultural injury.
+
    **11.6 Enforcement Costs:** Any party found to be in breach of this license shall be liable for all reasonable costs incurred by the Rights Holder (or their successor) in enforcing the license, including attorneys' fees, court costs, investigation expenses, and expert witness fees. This provision for cost recovery shall not be limited by Section 14 (Limitation of Liability).
 
    **11.7 Remedies Allocation:** All **Total Proceeds** (as defined in Section 1(i)) resulting from any dispute resolution process shall be allocated as specified in Section 9A.8 (during the Rights Holder's lifetime) or Section 10.3 (posthumously to the Legacy Beneficiary).
@@ -4294,7 +4602,7 @@ For affirmative orders (destroy models, publish corrections, provide accounting)
 
 **IMPORTANT NOTICE REGARDING LICENSE VERSIONING AND USER RESPONSIBILITY**
 
-As stated near the beginning of this document, the canonical and most current version of this license is maintained online. **Users bear the sole and ongoing responsibility to consult the authoritative license text at the URL below to ensure awareness of and compliance with the most current terms.** Continued access, use, distribution, or creation of derivative works based on any Work governed by this license constitutes the user's binding acceptance of the terms of the license version currently in effect at the time of such action. The Rights Holder is under no obligation to provide individual notice of updates. Updated December 16, 2025, incorporating EU AI Act compliance, synthetic media/deepfake protections, quantum-resistant cryptography, biometric data safeguards, and expanded Rights of Nature precedents.
+As stated near the beginning of this document, the canonical and most current version of this license is maintained online. **Users bear the sole and ongoing responsibility to consult the authoritative license text at the URL below to ensure awareness of and compliance with the most current terms.** Continued access, use, distribution, or creation of derivative works based on any Work governed by this license constitutes the user's binding acceptance of the terms of the license version currently in effect at the time of such action. The Rights Holder is under no obligation to provide individual notice of updates. Updated December 16, 2025, incorporating EU AI Act compliance, synthetic media/deepfake protections, quantum-resistant cryptography, biometric data safeguards, expanded Rights of Nature precedents, treaty territory boundary definitions, state-specific preemption analysis, federal court litigation checklist, and statute of limitations protections.
 
 [https://raw.githubusercontent.com/nbiish/license-for-all-works/refs/heads/main/working-LICENSE](https://raw.githubusercontent.com/nbiish/license-for-all-works/refs/heads/main/working-LICENSE)
 

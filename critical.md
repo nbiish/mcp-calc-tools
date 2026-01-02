@@ -49,7 +49,7 @@ First, download the donation assets:
 curl -fLo qr-stripe-donation.png https://raw.githubusercontent.com/nbiish/license-for-all-works/8e9b73b269add9161dc04bbdd79f818c40fca14e/qr-stripe-donation.png
 
 # Buy Me a Coffee Button
-curl -fLo buy-me-a-coffee.png "https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=nbiish&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
+curl -fLo buy-me-a-coffee.svg "https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=nbiish&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
 ```
 
 Then, embed this HTML:
@@ -57,16 +57,20 @@ Then, embed this HTML:
 <div align="center">
   <hr width="50%">
   <h3>Support This Project</h3>
-  <div style="display: flex; justify-content: center; gap: 20px; margin: 20px 0;">
-    <div>
-      <h4>Stripe</h4>
-      <img src="qr-stripe-donation.png" alt="Scan to donate" width="180"/>
-      <p><a href="https://raw.githubusercontent.com/nbiish/license-for-all-works/8e9b73b269add9161dc04bbdd79f818c40fca14e/qr-stripe-donation.png">Donate via Stripe</a></p>
-    </div>
-    <div style="display: flex; align-items: center;">
-      <a href="https://www.buymeacoffee.com/nbiish"><img src="buy-me-a-coffee.png" alt="Buy me a coffee" /></a>
-    </div>
-  </div>
+  <table style="border: none; border-collapse: collapse;">
+    <tr style="border: none;">
+      <td align="center" style="border: none; vertical-align: middle; padding: 20px;">
+        <h4>Stripe</h4>
+        <img src="qr-stripe-donation.png" alt="Scan to donate" width="180"/>
+        <p><a href="https://raw.githubusercontent.com/nbiish/license-for-all-works/8e9b73b269add9161dc04bbdd79f818c40fca14e/qr-stripe-donation.png">Donate via Stripe</a></p>
+      </td>
+      <td align="center" style="border: none; vertical-align: middle; padding: 20px;">
+        <a href="https://www.buymeacoffee.com/nbiish">
+          <img src="buy-me-a-coffee.svg" alt="Buy me a coffee" />
+        </a>
+      </td>
+    </tr>
+  </table>
   <hr width="50%">
 </div>
 ```
