@@ -9,8 +9,8 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "genkit": "^1.0.5",
-    "genkitx-mcp": "^1.0.5",
-    "mathjs": "^12.0.0"
+    "genkit": "^1.27.0",
+    "genkitx-mcp": "^1.14.1",
+    "mathjs": "^15.1.0"
   }
 }
