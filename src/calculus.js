@@ -1,7 +1,9 @@
 import * as math from 'mathjs';
+import { assertSafeIdentifier, createSafeScope, escapeRegExp } from './security.js';
 
 export const derivative = (expr, variable = 'x') => {
   try {
+    assertSafeIdentifier(variable, 'variable');
     const node = math.parse(expr);
     const derivativeExpr = math.derivative(node, variable);
     return derivativeExpr.toString();
@@ -12,8 +14,9 @@ export const derivative = (expr, variable = 'x') => {
 
 export const integral = (expr, variable = 'x') => {
   try {
+    assertSafeIdentifier(variable, 'variable');
     // For basic polynomials
-    const powerMatch = expr.match(new RegExp(`${variable}\\^(\\d+)`));
+    const powerMatch = expr.match(new RegExp(`${escapeRegExp(variable)}\\^(\\d+)`));
     if (powerMatch) {
       const n = parseInt(powerMatch[1]);
       return `${variable}^${n + 1}/${n + 1}`;
@@ -35,32 +38,33 @@ export const integral = (expr, variable = 'x') => {
 };
 
 export const riemannSum = (expr, variable, a, b, n, method = 'midpoint') => {
-  if (n <= 0) throw new Error('n must be positive');
-  if (n > 100000) throw new Error('n too large for safety');
-
   try {
+    assertSafeIdentifier(variable, 'variable');
+    if (n <= 0) throw new Error('n must be positive');
+    if (n > 100000) throw new Error('n too large for safety');
+
     const deltaX = (b - a) / n;
     let sum = 0;
     const node = math.parse(expr);
-    const scope = {};
+    const scope = createSafeScope();
     
     if (method === 'left' || method === 'right') {
       const offset = method === 'right' ? 1 : 0;
       for (let i = 0; i < n; i++) {
         const x = a + (i + offset) * deltaX;
-        scope[variable] = x;
+        scope.set(variable, x);
         sum += node.evaluate(scope) * deltaX;
       }
     } else if (method === 'midpoint') {
       for (let i = 0; i < n; i++) {
         const x = a + (i + 0.5) * deltaX;
-        scope[variable] = x;
+        scope.set(variable, x);
         sum += node.evaluate(scope) * deltaX;
       }
     } else if (method === 'trapezoid') {
       for (let i = 0; i <= n; i++) {
         const x = a + i * deltaX;
-        scope[variable] = x;
+        scope.set(variable, x);
         const coef = (i === 0 || i === n) ? 0.5 : 1;
         sum += coef * node.evaluate(scope) * deltaX;
       }
@@ -73,21 +77,22 @@ export const riemannSum = (expr, variable, a, b, n, method = 'midpoint') => {
 };
 
 export const darbouxSum = (expr, variable, a, b, n, type = 'upper') => {
-  if (n <= 0) throw new Error('n must be positive');
-  if (n > 100000) throw new Error('n too large for safety');
-
   try {
+    assertSafeIdentifier(variable, 'variable');
+    if (n <= 0) throw new Error('n must be positive');
+    if (n > 100000) throw new Error('n too large for safety');
+
     const deltaX = (b - a) / n;
     let sum = 0;
     const node = math.parse(expr);
-    const scope = {};
+    const scope = createSafeScope();
 
     for (let i = 0; i < n; i++) {
       const x1 = a + i * deltaX;
       const x2 = x1 + deltaX;
-      scope[variable] = x1;
+      scope.set(variable, x1);
       const y1 = node.evaluate(scope);
-      scope[variable] = x2;
+      scope.set(variable, x2);
       const y2 = node.evaluate(scope);
       
       const value = type === 'upper' ? Math.max(y1, y2) : Math.min(y1, y2);
@@ -102,15 +107,16 @@ export const darbouxSum = (expr, variable, a, b, n, type = 'upper') => {
 
 export const findLimit = (expr, variable, approach) => {
   try {
+    assertSafeIdentifier(variable, 'variable');
     const node = math.parse(expr);
-    const scope = {};
+    const scope = createSafeScope();
     const epsilon = 1e-10;
     
     // Evaluate near the approach point
-    scope[variable] = approach + epsilon;
+    scope.set(variable, approach + epsilon);
     const rightLimit = node.evaluate(scope);
     
-    scope[variable] = approach - epsilon;
+    scope.set(variable, approach - epsilon);
     const leftLimit = node.evaluate(scope);
     
     // Check if limits from both sides are approximately equal
@@ -123,4 +129,3 @@ export const findLimit = (expr, variable, approach) => {
     throw new Error(`Limit error: ${e.message}`);
   }
 };
-

@@ -11,6 +11,7 @@ import * as utils from './src/utils.js';
 import * as pipelines from './src/pipelines.js';
 
 const ai = genkit({});
+const identifierSchema = z.string().regex(/^[A-Za-z_][A-Za-z0-9_]*$/, 'Must be a safe identifier');
 
 // --- Calculus Tools ---
 
@@ -20,7 +21,7 @@ ai.defineTool(
     description: 'Calculate the symbolic derivative of a mathematical expression. Use for finding slopes, rates of change, and optimization points. Example: derivative("x^3 + 2x", "x") -> "3 * x ^ 2 + 2"',
     inputSchema: z.object({
       expression: z.string().describe('Mathematical expression (e.g., "x^2", "sin(x)", "log(x)")'),
-      variable: z.string().optional().default('x').describe('Variable to differentiate with respect to')
+      variable: identifierSchema.optional().default('x').describe('Variable to differentiate with respect to')
     }),
     outputSchema: z.string(),
   },
@@ -33,7 +34,7 @@ ai.defineTool(
     description: 'Calculate the symbolic indefinite integral (antiderivative). Example: integral("2x") -> "x^2". Note: Only supports basic elementary functions.',
     inputSchema: z.object({
       expression: z.string().describe('Expression to integrate'),
-      variable: z.string().optional().default('x').describe('Variable of integration')
+      variable: identifierSchema.optional().default('x').describe('Variable of integration')
     }),
     outputSchema: z.string(),
   },
@@ -46,7 +47,7 @@ ai.defineTool(
     description: 'Numerical definite integration using Riemann sums. Example: riemann_sum("x^2", "x", 0, 1, 1000, "trapezoid")',
     inputSchema: z.object({
       expression: z.string().describe('Function to integrate'),
-      variable: z.string().describe('Variable'),
+      variable: identifierSchema.describe('Variable'),
       a: z.number().describe('Start point'),
       b: z.number().describe('End point'),
       n: z.number().min(1).max(100000).describe('Number of intervals (max 100,000)'),
@@ -63,7 +64,7 @@ ai.defineTool(
     description: 'Determine the limit of a function as a variable approaches a value.',
     inputSchema: z.object({
       expression: z.string().describe('Expression'),
-      variable: z.string().describe('Variable'),
+      variable: identifierSchema.describe('Variable'),
       approach: z.number().describe('Value to approach')
     }),
     outputSchema: z.union([z.number(), z.string()]),
@@ -213,7 +214,7 @@ ai.defineTool(
       principal: z.number().positive(),
       rate: z.number().nonnegative().describe('Rate per period (as decimal)'),
       periods: z.number().int().positive().describe('Number of periods'),
-      compounds: z.number().optional().default(1).describe('Compounds per period')
+      compounds: z.number().int().positive().optional().default(1).describe('Compounds per period')
     }),
     outputSchema: z.array(z.object({
       period: z.number(),
@@ -275,7 +276,7 @@ ai.defineTool(
     description: 'Numerical approximation of the Laplace transform of a function f(t).',
     inputSchema: z.object({
       expression: z.string().describe('f(t)'),
-      timeVar: z.string().default('t'),
+      timeVar: identifierSchema.default('t'),
       laplaceVar: z.number().describe('s (complex or real frequency)')
     }),
     outputSchema: z.string(),
@@ -289,7 +290,7 @@ ai.defineTool(
     description: 'Numerical approximation of the Fourier transform of a function f(t).',
     inputSchema: z.object({
       expression: z.string().describe('f(t)'),
-      timeVar: z.string().default('t'),
+      timeVar: identifierSchema.default('t'),
       freqVar: z.number().describe('omega (frequency)')
     }),
     outputSchema: z.string(),
@@ -305,7 +306,7 @@ ai.defineTool(
     description: 'Find root of f(x)=0 using Newton method. Provide expression, variable, and initial guess.',
     inputSchema: z.object({
       expression: z.string().describe('f(x)'),
-      variable: z.string().default('x'),
+      variable: identifierSchema.default('x'),
       guess: z.number()
     }),
     outputSchema: z.number(),

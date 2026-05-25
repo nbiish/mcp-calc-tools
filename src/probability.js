@@ -2,6 +2,9 @@ import * as math from 'mathjs';
 
 export const normalDistribution = (x, mu = 0, sigma = 1) => {
   try {
+    if (sigma <= 0) {
+      throw new Error('sigma must be positive');
+    }
     const exponent = -Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2));
     const coefficient = 1 / (sigma * Math.sqrt(2 * Math.PI));
     return coefficient * Math.exp(exponent);
@@ -11,6 +14,12 @@ export const normalDistribution = (x, mu = 0, sigma = 1) => {
 };
 
 export const binomialDistribution = (k, n, p) => {
+  if (!Number.isInteger(k) || !Number.isInteger(n) || n <= 0) {
+    throw new Error('k and n must be integers and n must be positive');
+  }
+  if (p < 0 || p > 1) {
+    throw new Error('p must be between 0 and 1');
+  }
   if (k < 0 || k > n) return 0;
   try {
     const combinations = math.combinations(n, k);
@@ -21,6 +30,12 @@ export const binomialDistribution = (k, n, p) => {
 };
 
 export const poissonDistribution = (k, lambda) => {
+  if (!Number.isInteger(k) || k < 0) {
+    throw new Error('k must be a non-negative integer');
+  }
+  if (lambda < 0) {
+    throw new Error('lambda must be non-negative');
+  }
   if (k < 0) return 0;
   try {
     return (Math.pow(lambda, k) * Math.exp(-lambda)) / math.factorial(k);
@@ -28,4 +43,3 @@ export const poissonDistribution = (k, lambda) => {
     throw new Error(`Poisson distribution error: ${e.message}`);
   }
 };
-

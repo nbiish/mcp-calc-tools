@@ -1,4 +1,5 @@
 import * as math from 'mathjs';
+import { createSafeScope } from './security.js';
 
 /**
  * Evaluates a chain of operations.
@@ -19,7 +20,14 @@ export const evaluateChain = (operations) => {
     // This is a simplified version. A real implementation would map 'op' to actual tool functions.
     // For now, we'll use math.evaluate if it's a simple math op, or handle specific cases.
     if (op === 'math') {
-      lastResult = math.evaluate(processedArgs.expression, processedArgs.scope || {});
+      const scope =
+        processedArgs.scope && typeof processedArgs.scope === 'object'
+          ? createSafeScope(processedArgs.scope)
+          : createSafeScope();
+      lastResult = math.evaluate(
+        processedArgs.expression,
+        scope
+      );
     } else {
       throw new Error(`Operation ${op} not supported in chain yet.`);
     }
@@ -27,4 +35,3 @@ export const evaluateChain = (operations) => {
   }
   return { lastResult, results };
 };
-

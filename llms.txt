@@ -1,0 +1,204 @@
+# mcp-calc-tools
+
+> Advanced calculus, finance, linear algebra, probability, and engineering math tools for AI agents via MCP (Model Context Protocol).
+
+## Overview
+
+- **Name:** mcp-calc-tools-advanced
+- **Version:** 1.1.0
+- **Runtime:** Node.js (ESM, `"type": "module"`)
+- **Package Manager:** pnpm
+- **Language:** JavaScript (no TypeScript, no build step required)
+- **Entry Point:** `index.js` (shebang `#!/usr/bin/env node`, runnable directly)
+- **Purpose:** Expose mathematical computation tools to AI agents through the Model Context Protocol so agents can perform calculus, linear algebra, finance, probability, optimization, and signal processing operations on demand.
+- **UX:** MCP server (stdio transport). Configured in agent MCP settings as a `"command": "node", "args": ["path/to/index.js"]` entry.
+
+## Architecture
+
+```
+index.js                  # Genkit app — defines all MCP tools, starts server
+src/
+  calculus.js             # Derivatives, integrals, Riemann/Darboux sums, limits
+  finance.js              # Black-Scholes, Greeks, Sharpe, VaR, cashflow schedule
+  linear-algebra.js       # Matrix multiply, inverse, determinant, eigenvalues
+  probability.js          # Normal, binomial, Poisson distributions
+  transforms.js           # Laplace, Fourier, Z-transform (numerical)
+  optimization.js         # Newton-method root finding
+  pipelines.js            # Chain-of-operations executor ($LAST placeholder)
+  utils.js                # Volume of revolution, compound interest, PV, NPV
+test/
+  math.test.js            # Node assert-based smoke tests (no test framework)
+```
+
+### Dependency Graph
+
+- `index.js` imports every `src/*.js` module and Genkit + genkitx-mcp.
+- All `src/*.js` modules depend on `mathjs` for expression parsing and math operations.
+- `src/finance.js` uses `mathjs` for `mean`/`std` and its own `normalCDF`/`normalPDF` implementations.
+- No circular dependencies. No inter-module imports between `src/` files.
+
+## Key Dependencies
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `genkit` | ^1.27.0 | AI framework — provides `genkit()`, `z` (Zod), `defineTool()` |
+| `genkitx-mcp` | ^1.14.1 | MCP server adapter — wraps Genkit tools into an MCP server |
+| `mathjs` | ^15.1.0 | Expression parsing, symbolic math, matrix ops, combinatorics |
+
+## How It Works
+
+1. **Bootstrap:** `index.js` creates a Genkit instance (`genkit({})`) and uses `ai.defineTool()` to register 20 tools with Zod-validated input/output schemas.
+2. **Server:** `mcpServer(ai, { name, version, description })` from `genkitx-mcp` wraps the Genkit app into an MCP server. `server.start()` begins listening on stdio.
+3. **Tool execution:** When an MCP client calls a tool, Genkit validates inputs against the Zod schema, invokes the async handler, and returns the result. All handlers are thin wrappers that delegate to the corresponding `src/*.js` function.
+
+## Tools Reference (20 tools)
+
+### Calculus (`src/calculus.js`)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `derivative` | expression, variable? | string | Symbolic via `math.derivative()` |
+| `integral` | expression, variable? | string | Basic pattern-matching (polynomials + common functions). Limited symbolic integration. |
+| `riemann_sum` | expression, variable, a, b, n (≤100k), method | number | Methods: left, right, midpoint, trapezoid |
+| `limit` | expression, variable, approach | number \| string | Numerical — evaluates at approach ± ε, checks left/right agreement |
+| `volume_of_revolution` | expression, start, end, steps? | number | Disk method, lives in `src/utils.js` |
+
+### Linear Algebra (`src/linear-algebra.js`)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `matrix_multiply` | a[][], b[][] | number[][] | `math.multiply` |
+| `matrix_inverse` | m[][] | number[][] | `math.inv` |
+| `matrix_determinant` | m[][] | number | `math.det` |
+| `eigenvalues` | m[][] | number[] | `math.eigs().values` |
+
+### Finance (`src/finance.js`)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `black_scholes` | S, K, T, r, sigma, optionType? | number | European option pricing |
+| `option_greeks` | S, K, T, r, sigma, optionType? | {delta, gamma, vega, theta, rho} | Full Greeks suite |
+| `sharpe_ratio` | returns[], riskFreeRate? | number | (mean - Rf) / std |
+| `value_at_risk` | returns[] (≥10), confidence? | number | Historical method, percentile-based |
+| `cashflow_schedule` | principal, rate, periods, compounds? | {period, interest, balance}[] | Compound interest schedule |
+
+### Probability (`src/probability.js`)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `normal_distribution` | x, mu?, sigma? | number | PDF evaluation |
+| `binomial_distribution` | k, n, p | number | P(X=k) |
+| `poisson_distribution` | k, lambda | number | P(X=k) |
+
+### Engineering Transforms (`src/transforms.js`)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `laplace_transform` | expression, timeVar?, laplaceVar (s) | string (complex) | Numerical integration to t=100, 1000 steps |
+| `fourier_transform` | expression, timeVar?, freqVar (ω) | string (complex) | Numerical integration over [-50, 50], 1000 steps |
+
+### Optimization (`src/optimization.js`)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `find_root` | expression, variable?, guess | number | Newton's method, max 100 iterations, tolerance 1e-7 |
+
+### Meta / Pipeline
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `describe_available_tools` | task (natural language) | {suggestedTools[], reasoning} | Keyword-based tool discovery |
+| `evaluate_pipeline` | operations[] ({op, args}) | {lastResult, results[]} | Chain math ops; `$LAST` placeholder for previous result |
+
+## Security & Safety
+
+- **No `eval()`:** All expression parsing uses `mathjs` `math.parse()` + `node.evaluate()`.
+- **Zod validation:** Every tool input is strictly schema-validated by Genkit before handler invocation.
+- **Iteration caps:** `riemann_sum` and `volume_of_revolution` hard-limit `n`/`steps` to 100,000. Z-transform limits to 10,000. `find_root` limits to 100 iterations.
+- **Input guards:** Finance functions validate S, K, T, sigma > 0. Probability functions validate k ≥ 0, p ∈ [0,1].
+
+## Security Audit Log
+
+**Date:** 2026-05-25  
+**Scope:** `index.js`, `src/*.js`, `test/math.test.js`
+
+### Findings
+
+| Severity | Area | Finding | Status |
+|---------|------|---------|--------|
+| High | Scope handling | User-controlled variable names were written into normal objects, creating prototype-pollution risk for `__proto__`/`constructor` style keys. | Fixed |
+| Medium | Integral helper | Raw variable text was interpolated into a `RegExp`, allowing regex metacharacter injection. | Fixed |
+| Medium | Direct exports | Some helpers accepted invalid numeric inputs at runtime even when tool schemas were bypassed. | Fixed |
+| Medium | Pipeline evaluator | Dynamic scopes were passed through without null-prototype normalization. | Fixed |
+
+### Audit notes
+
+- No `eval()`, `Function()`, child-process, or filesystem write paths were found in the runtime code.
+- Expression handling stays on `mathjs` parsing/evaluation.
+- Remaining work is product-level coverage: add convergence tests for transforms and expand symbolic integration patterns.
+
+## Rules
+
+### Naming & Comments
+
+- Module files use kebab-case (`linear-algebra.js`). Exported functions use camelCase (`blackScholes`).
+- Tool names use snake_case (`matrix_multiply`) for MCP convention.
+- JSDoc on complex functions (see `src/pipelines.js`).
+
+### Always
+
+- Register new tools in `index.js` with `ai.defineTool()` including `inputSchema`, `outputSchema`, and `description`.
+- Validate numeric inputs at the Zod schema level and inside the handler for business rules.
+- Cap iteration counts on all numerical methods.
+- Use `math.parse()` for expression evaluation — never `eval()` or `Function()`.
+
+### Never
+
+- Do not add runtime dependencies beyond `genkit`, `genkitx-mcp`, and `mathjs` without strong justification.
+- Do not use `eval()`, `new Function()`, or `vm` module for expression evaluation.
+- Do not remove iteration/subdivision caps on numerical methods.
+
+### If
+
+- If adding a new math domain, create a new `src/<domain>.js` module, import it in `index.js`, and define corresponding tools.
+- If a symbolic algorithm is too limited (e.g., `integral`), supplement with numerical approaches rather than adding a CAS dependency.
+
+## Testing
+
+```bash
+node test/math.test.js    # Assert-based smoke tests, no framework
+```
+
+Tests cover: derivatives, integrals, Riemann sums, matrix multiply/determinant, Black-Scholes pricing, and Sharpe ratio.
+
+## Development
+
+```bash
+pnpm install              # Install dependencies
+pnpm build                # chmod +x index.js (no compilation)
+pnpm start                # node index.js (starts MCP server on stdio)
+```
+
+## TODO
+
+> Keep tasks atomic and testable.
+
+### In Progress
+- [ ] Add convergence tests for numerical transforms
+- [ ] Expand symbolic integration coverage beyond basic patterns
+
+### Completed
+- [x] Core calculus tools (derivative, integral, Riemann sum, limit)
+- [x] Linear algebra tools (multiply, inverse, determinant, eigenvalues)
+- [x] Finance tools (Black-Scholes, Greeks, Sharpe, VaR, cashflow)
+- [x] Probability distributions (normal, binomial, Poisson)
+- [x] Engineering transforms (Laplace, Fourier)
+- [x] Optimization (Newton root-finding)
+- [x] Pipeline chaining with `$LAST` placeholder
+- [x] Tool discovery via `describe_available_tools`
+- [x] Security hardening for identifier validation, scope cloning, and direct-export input guards
+
+## Short-term Goals
+
+- Add test coverage for transforms, optimization, probability, and pipelines modules
+- Expand integral capabilities (u-substitution, integration by parts patterns)
+- Add tool descriptions with worked examples for agent self-discovery
+
+## Reference Codebases
+
+- [Genkit](https://github.com/firebase/genkit) — AI framework for tool definitions
+- [genkitx-mcp](https://github.com/firebase/genkit) — MCP server adapter for Genkit
+- [mathjs](https://github.com/josdejong/mathjs) — Expression parser and math library

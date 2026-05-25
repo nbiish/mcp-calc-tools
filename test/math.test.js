@@ -1,6 +1,9 @@
 import * as calculus from '../src/calculus.js';
 import * as finance from '../src/finance.js';
 import * as linalg from '../src/linear-algebra.js';
+import * as probability from '../src/probability.js';
+import * as optim from '../src/optimization.js';
+import * as transforms from '../src/transforms.js';
 import assert from 'assert';
 
 console.log('Running Math & Finance Tests...');
@@ -31,10 +34,18 @@ try {
   const sharpe = finance.sharpeRatio([0.1, 0.2, -0.05, 0.05], 0.01);
   assert(sharpe > 0);
 
+  // Security hardening tests
+  console.log('- Testing Security Hardening...');
+  assert.throws(() => calculus.riemannSum('x', '__proto__', 0, 1, 10, 'midpoint'));
+  assert.throws(() => calculus.integral('x^2', 'x('));
+  assert.throws(() => optim.findRoot('x^2 - 4', 'constructor', 1));
+  assert.throws(() => transforms.laplaceTransform('t', '__proto__', 1));
+  assert.throws(() => probability.normalDistribution(0, 0, 0));
+  assert.throws(() => finance.cashflowSchedule(100, 0.05, 12, 0));
+
   console.log('✅ All tests passed!');
 } catch (e) {
   console.error('❌ Test failed:');
   console.error(e);
   process.exit(1);
 }
-

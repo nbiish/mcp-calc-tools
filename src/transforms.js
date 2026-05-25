@@ -1,7 +1,9 @@
 import * as math from 'mathjs';
+import { assertSafeIdentifier, createSafeScope } from './security.js';
 
 export const laplaceTransform = (expr, t, s) => {
   try {
+    assertSafeIdentifier(t, 'timeVar');
     const node = math.parse(expr);
     // Using numerical integration for a basic approximation
     const upperLimit = 100; // Approximation of infinity
@@ -11,7 +13,7 @@ export const laplaceTransform = (expr, t, s) => {
     
     for (let i = 0; i < steps; i++) {
       const time = i * dt;
-      const scope = { [t]: time };
+      const scope = createSafeScope({ [t]: time });
       const ft = node.evaluate(scope);
       const expTerm = math.exp(math.multiply(math.complex(-s, 0), time));
       result = math.add(result, 
@@ -26,6 +28,7 @@ export const laplaceTransform = (expr, t, s) => {
 
 export const fourierTransform = (expr, t, omega) => {
   try {
+    assertSafeIdentifier(t, 'timeVar');
     const node = math.parse(expr);
     // Using numerical integration for a basic approximation
     const limit = 50; // Approximation of infinity
@@ -35,7 +38,7 @@ export const fourierTransform = (expr, t, omega) => {
     
     for (let i = 0; i < steps; i++) {
       const time = -limit + i * dt;
-      const scope = { [t]: time };
+      const scope = createSafeScope({ [t]: time });
       const ft = node.evaluate(scope);
       const expTerm = math.exp(
         math.multiply(
@@ -57,11 +60,12 @@ export const fourierTransform = (expr, t, omega) => {
 export const zTransform = (expr, n, z, limit = 100) => {
   if (limit > 10000) throw new Error('Limit too large for safety');
   try {
+    assertSafeIdentifier(n, 'index variable');
     const node = math.parse(expr);
     let result = math.complex(0, 0);
     
     for (let k = 0; k <= limit; k++) {
-      const scope = { [n]: k };
+      const scope = createSafeScope({ [n]: k });
       const fn = node.evaluate(scope);
       const zTerm = math.pow(z, -k);
       result = math.add(result, math.multiply(fn, zTerm));
@@ -72,4 +76,3 @@ export const zTransform = (expr, n, z, limit = 100) => {
     throw new Error(`Z-Transform error: ${e.message}`);
   }
 };
-

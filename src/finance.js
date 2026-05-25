@@ -81,6 +81,9 @@ export const valueAtRisk = (returns, confidence = 0.95) => {
 };
 
 export const cashflowSchedule = (principal, rate, periods, compounds = 1) => {
+  if (principal < 0) throw new Error('principal must be non-negative');
+  if (!Number.isInteger(periods) || periods <= 0) throw new Error('periods must be a positive integer');
+  if (!Number.isInteger(compounds) || compounds <= 0) throw new Error('compounds must be a positive integer');
   const schedule = [];
   const periodicRate = rate / compounds;
   let balance = principal;
