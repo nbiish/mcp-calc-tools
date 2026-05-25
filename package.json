@@ -1,13 +1,48 @@
 {
-  "name": "genkit-mcp",
-  "version": "1.0.0",
-  "description": "Genkit MCP Server Implementation",
+  "name": "mcp-calc-tools",
+  "version": "1.1.0",
+  "description": "Advanced calculus, finance, linear algebra, probability, and engineering math tools for AI agents via MCP (Model Context Protocol).",
   "main": "index.js",
+  "bin": {
+    "mcp-calc-tools": "index.js"
+  },
   "type": "module",
+  "files": [
+    "index.js",
+    "src/**/*.js",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "chmod +x index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node test/math.test.js"
   },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "calculator",
+    "math",
+    "calculus",
+    "finance",
+    "linear-algebra",
+    "probability",
+    "black-scholes",
+    "genkit",
+    "ai-agent",
+    "laplace",
+    "fourier",
+    "optimization"
+  ],
+  "author": "Nbiish Waabanimikii-Kinawaabakizi (Justin Paul Kenwabikise)",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nbiish/mcp-calc-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nbiish/mcp-calc-tools/issues"
+  },
+  "homepage": "https://github.com/nbiish/mcp-calc-tools#readme",
   "dependencies": {
     "genkit": "^1.27.0",
     "genkitx-mcp": "^1.14.1",
