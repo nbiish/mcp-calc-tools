@@ -123,11 +123,14 @@ test/
 | Medium | Integral helper | Raw variable text was interpolated into a `RegExp`, allowing regex metacharacter injection. | Fixed |
 | Medium | Direct exports | Some helpers accepted invalid numeric inputs at runtime even when tool schemas were bypassed. | Fixed |
 | Medium | Pipeline evaluator | Dynamic scopes were passed through without null-prototype normalization. | Fixed |
+| Medium | Resource exhaustion | Matrix operations and long-running numeric series were not bounded tightly enough for CPU/memory abuse. | Fixed |
 
 ### Audit notes
 
 - No `eval()`, `Function()`, child-process, or filesystem write paths were found in the runtime code.
 - Expression handling stays on `mathjs` parsing/evaluation.
+- Matrix and series inputs now have explicit size caps in both schemas and runtime guards.
+- The server is stdio-only; if it is ever exposed over a network transport, add authn/authz and transport-layer protections first.
 - Remaining work is product-level coverage: add convergence tests for transforms and expand symbolic integration patterns.
 
 ## Rules

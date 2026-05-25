@@ -1,4 +1,10 @@
 import * as math from 'mathjs';
+import {
+  assertFiniteNumber,
+  assertLengthWithinLimit,
+  CASHFLOW_PERIOD_LIMIT,
+  SERIES_LENGTH_LIMIT
+} from './security.js';
 
 export const normalCDF = (x) => {
   const t = 1 / (1 + 0.2316419 * Math.abs(x));
@@ -12,6 +18,11 @@ export const normalPDF = (x) => {
 };
 
 export const blackScholes = (S, K, T, r, sigma, optionType = 'call') => {
+  assertFiniteNumber(S, 'S');
+  assertFiniteNumber(K, 'K');
+  assertFiniteNumber(T, 'T');
+  assertFiniteNumber(r, 'r');
+  assertFiniteNumber(sigma, 'sigma');
   if (S <= 0 || K <= 0 || T <= 0 || sigma <= 0) {
     throw new Error('S, K, T, and sigma must be positive');
   }
@@ -32,6 +43,11 @@ export const blackScholes = (S, K, T, r, sigma, optionType = 'call') => {
 };
 
 export const optionGreeks = (S, K, T, r, sigma, optionType = 'call') => {
+  assertFiniteNumber(S, 'S');
+  assertFiniteNumber(K, 'K');
+  assertFiniteNumber(T, 'T');
+  assertFiniteNumber(r, 'r');
+  assertFiniteNumber(sigma, 'sigma');
   if (S <= 0 || K <= 0 || T <= 0 || sigma <= 0) {
     throw new Error('S, K, T, and sigma must be positive');
   }
@@ -66,7 +82,9 @@ export const optionGreeks = (S, K, T, r, sigma, optionType = 'call') => {
 };
 
 export const sharpeRatio = (returns, riskFreeRate = 0) => {
+  assertLengthWithinLimit(returns, 'returns', SERIES_LENGTH_LIMIT);
   if (returns.length < 2) throw new Error('Need at least two return values');
+  assertFiniteNumber(riskFreeRate, 'riskFreeRate');
   const avgReturn = math.mean(returns);
   const stdDev = math.std(returns);
   if (stdDev === 0) return 0;
@@ -74,16 +92,25 @@ export const sharpeRatio = (returns, riskFreeRate = 0) => {
 };
 
 export const valueAtRisk = (returns, confidence = 0.95) => {
+  assertLengthWithinLimit(returns, 'returns', SERIES_LENGTH_LIMIT);
   if (returns.length < 10) throw new Error('Need more data for VaR calculation');
+  if (confidence < 0.5 || confidence > 0.999) {
+    throw new Error('confidence must be between 0.5 and 0.999');
+  }
   const sortedReturns = [...returns].sort((a, b) => a - b);
   const index = Math.floor((1 - confidence) * sortedReturns.length);
   return -sortedReturns[index];
 };
 
 export const cashflowSchedule = (principal, rate, periods, compounds = 1) => {
+  assertFiniteNumber(principal, 'principal');
+  assertFiniteNumber(rate, 'rate');
   if (principal < 0) throw new Error('principal must be non-negative');
   if (!Number.isInteger(periods) || periods <= 0) throw new Error('periods must be a positive integer');
   if (!Number.isInteger(compounds) || compounds <= 0) throw new Error('compounds must be a positive integer');
+  if (periods > CASHFLOW_PERIOD_LIMIT) {
+    throw new Error(`periods must be at most ${CASHFLOW_PERIOD_LIMIT}`);
+  }
   const schedule = [];
   const periodicRate = rate / compounds;
   let balance = principal;

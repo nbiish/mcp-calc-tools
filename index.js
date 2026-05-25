@@ -94,10 +94,10 @@ ai.defineTool(
     name: 'matrix_multiply',
     description: 'Multiply two matrices. Input as arrays of arrays.',
     inputSchema: z.object({
-      a: z.array(z.array(z.number())),
-      b: z.array(z.array(z.number()))
+      a: z.array(z.array(z.number().finite()).max(100)).max(100),
+      b: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
-    outputSchema: z.array(z.array(z.number())),
+    outputSchema: z.array(z.array(z.number().finite())),
   },
   async ({ a, b }) => linalg.matrixMultiply(a, b)
 );
@@ -107,9 +107,9 @@ ai.defineTool(
     name: 'matrix_inverse',
     description: 'Find the inverse of a square matrix.',
     inputSchema: z.object({
-      m: z.array(z.array(z.number()))
+      m: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
-    outputSchema: z.array(z.array(z.number())),
+    outputSchema: z.array(z.array(z.number().finite())),
   },
   async ({ m }) => linalg.matrixInverse(m)
 );
@@ -119,7 +119,7 @@ ai.defineTool(
     name: 'matrix_determinant',
     description: 'Calculate the determinant of a square matrix.',
     inputSchema: z.object({
-      m: z.array(z.array(z.number()))
+      m: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
     outputSchema: z.number(),
   },
@@ -131,9 +131,9 @@ ai.defineTool(
     name: 'eigenvalues',
     description: 'Find the eigenvalues of a square matrix.',
     inputSchema: z.object({
-      m: z.array(z.array(z.number()))
+      m: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
-    outputSchema: z.array(z.number()),
+    outputSchema: z.array(z.number().finite()),
   },
   async ({ m }) => linalg.eigenvalues(m)
 );
@@ -185,7 +185,7 @@ ai.defineTool(
     name: 'sharpe_ratio',
     description: 'Calculate Sharpe ratio of a return series relative to a risk-free rate.',
     inputSchema: z.object({
-      returns: z.array(z.number()).min(2).describe('Array of percentage returns'),
+      returns: z.array(z.number().finite()).min(2).max(10000).describe('Array of percentage returns'),
       riskFreeRate: z.number().optional().default(0).describe('Periodic risk-free rate')
     }),
     outputSchema: z.number(),
@@ -198,7 +198,7 @@ ai.defineTool(
     name: 'value_at_risk',
     description: 'Estimate Value at Risk (VaR) using historical method at a given confidence level.',
     inputSchema: z.object({
-      returns: z.array(z.number()).min(10).describe('Historical returns data'),
+      returns: z.array(z.number().finite()).min(10).max(10000).describe('Historical returns data'),
       confidence: z.number().min(0.5).max(0.999).default(0.95).describe('Confidence level (e.g. 0.95)')
     }),
     outputSchema: z.number(),
@@ -213,7 +213,7 @@ ai.defineTool(
     inputSchema: z.object({
       principal: z.number().positive(),
       rate: z.number().nonnegative().describe('Rate per period (as decimal)'),
-      periods: z.number().int().positive().describe('Number of periods'),
+      periods: z.number().int().positive().max(10000).describe('Number of periods'),
       compounds: z.number().int().positive().optional().default(1).describe('Compounds per period')
     }),
     outputSchema: z.array(z.object({
