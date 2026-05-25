@@ -9,9 +9,12 @@ import * as prob from './src/probability.js';
 import * as optim from './src/optimization.js';
 import * as utils from './src/utils.js';
 import * as pipelines from './src/pipelines.js';
+import { EXPRESSION_MAX_LENGTH, TASK_MAX_LENGTH } from './src/security.js';
 
 const ai = genkit({});
 const identifierSchema = z.string().regex(/^[A-Za-z_][A-Za-z0-9_]*$/, 'Must be a safe identifier');
+const expressionSchema = z.string().max(EXPRESSION_MAX_LENGTH, `Expression must not exceed ${EXPRESSION_MAX_LENGTH} characters`);
+const taskSchema = z.string().max(TASK_MAX_LENGTH, `Task description must not exceed ${TASK_MAX_LENGTH} characters`);
 
 // --- Calculus Tools ---
 
@@ -20,7 +23,7 @@ ai.defineTool(
     name: 'derivative',
     description: 'Calculate the symbolic derivative of a mathematical expression. Returns the derivative as a string. Use for finding slopes, rates of change, and optimization points. Examples: derivative("x^3 + 2x", "x") -> "3 * x ^ 2 + 2", derivative("sin(x)") -> "cos(x)", derivative("e^x") -> "e^x", derivative("log(x, 2)") -> "1 / (x * log(2))"',
     inputSchema: z.object({
-      expression: z.string().describe('Mathematical expression (e.g., "x^2", "sin(x)", "log(x)")'),
+      expression: expressionSchema.describe('Mathematical expression (e.g., "x^2", "sin(x)", "log(x)")'),
       variable: identifierSchema.optional().default('x').describe('Variable to differentiate with respect to')
     }),
     outputSchema: z.string(),
@@ -33,7 +36,7 @@ ai.defineTool(
     name: 'integral',
     description: 'Calculate the symbolic indefinite integral (antiderivative). Supports polynomials, exponentials (e^(a*x)), trig (sin, cos, tan), logarithms, u-substitution patterns (e^(x^n)*x, sin(x^n)*x), integration by parts (x*sin(x), x*e^x, ln(x), x*ln(x)), and inverse trig forms. Returns "Cannot compute integral symbolically" for unsupported forms — use riemann_sum for numerical integration instead. Examples: integral("3*x^2") -> "1 * x^3", integral("sin(x)") -> "-1 * cos(1 * x)", integral("e^(2*x)") -> "0.5 * e^(2 * x)", integral("x * sin(x)") -> "sin(x) - x * cos(x)", integral("ln(x)") -> "x * ln(x) - x"',
     inputSchema: z.object({
-      expression: z.string().describe('Expression to integrate'),
+      expression: expressionSchema.describe('Expression to integrate'),
       variable: identifierSchema.optional().default('x').describe('Variable of integration')
     }),
     outputSchema: z.string(),
@@ -46,7 +49,7 @@ ai.defineTool(
     name: 'riemann_sum',
     description: 'Numerical definite integration using Riemann sums. Methods: left, right, midpoint (default), trapezoid. Returns a number. Use when symbolic integral cannot solve the expression. Examples: riemann_sum("x^2", "x", 0, 1, 1000, "trapezoid") ≈ 0.333, riemann_sum("sin(x)", "x", 0, 3.14159, 10000, "midpoint") ≈ 2.0',
     inputSchema: z.object({
-      expression: z.string().describe('Function to integrate'),
+      expression: expressionSchema.describe('Function to integrate'),
       variable: identifierSchema.describe('Variable'),
       a: z.number().describe('Start point'),
       b: z.number().describe('End point'),
@@ -63,7 +66,7 @@ ai.defineTool(
     name: 'limit',
     description: 'Determine the limit of a function as a variable approaches a value. Uses numerical evaluation from both sides. Returns a number if the limit exists, or a string "Limit does not exist or function is discontinuous". Examples: limit("x^2", "x", 3) -> 9, limit("sin(x)/x", "x", 0) -> 1, limit("1/x", "x", 0) -> "Limit does not exist..."',
     inputSchema: z.object({
-      expression: z.string().describe('Expression'),
+      expression: expressionSchema.describe('Expression'),
       variable: identifierSchema.describe('Variable'),
       approach: z.number().describe('Value to approach')
     }),
@@ -77,7 +80,7 @@ ai.defineTool(
     name: 'volume_of_revolution',
     description: 'Calculate the volume of a solid of revolution around the x-axis using the disk method. V = π∫f(x)²dx. Examples: volume_of_revolution("1", 0, 1) -> π ≈ 3.14159, volume_of_revolution("x", 0, 1) -> π/3 ≈ 1.047',
     inputSchema: z.object({
-      expression: z.string().describe('Function f(x) to rotate'),
+      expression: expressionSchema.describe('Function f(x) to rotate'),
       start: z.number().describe('Starting x-value'),
       end: z.number().describe('Ending x-value'),
       steps: z.number().optional().default(1000).describe('Precision steps (default 1000, max 100,000)')
@@ -275,7 +278,7 @@ ai.defineTool(
     name: 'laplace_transform',
     description: 'Numerical approximation of the Laplace transform F(s) = ∫₀^∞ f(t)·e^(-st) dt. Provide expression in t, and a real s value. Returns a complex number string. Example: laplace_transform("e^(-t)", "t", 1) ≈ "0.5" (exact: 1/(s+1))',
     inputSchema: z.object({
-      expression: z.string().describe('f(t)'),
+      expression: expressionSchema.describe('f(t)'),
       timeVar: identifierSchema.default('t'),
       laplaceVar: z.number().describe('s (complex or real frequency)')
     }),
@@ -289,7 +292,7 @@ ai.defineTool(
     name: 'fourier_transform',
     description: 'Numerical approximation of the Fourier transform F(ω) = ∫ f(t)·e^(-iωt) dt. Provide expression in t and frequency ω. Returns a complex number string. Example: fourier_transform("e^(-t^2)", "t", 0) ≈ "1.772" (exact: √π)',
     inputSchema: z.object({
-      expression: z.string().describe('f(t)'),
+      expression: expressionSchema.describe('f(t)'),
       timeVar: identifierSchema.default('t'),
       freqVar: z.number().describe('omega (frequency)')
     }),
@@ -305,7 +308,7 @@ ai.defineTool(
     name: 'find_root',
     description: 'Find root of f(x)=0 using Newton-Raphson method. Provide the expression, variable, and initial guess. Converges quickly for well-behaved functions. Examples: find_root("x^2 - 4", "x", 3) -> 2, find_root("cos(x) - 0.5", "x", 1) -> 1.0472 (=π/3)',
     inputSchema: z.object({
-      expression: z.string().describe('f(x)'),
+      expression: expressionSchema.describe('f(x)'),
       variable: identifierSchema.default('x'),
       guess: z.number()
     }),
@@ -321,7 +324,7 @@ ai.defineTool(
     name: 'describe_available_tools',
     description: 'Find the right tool for your math or finance problem. Describe your goal in natural language and get tool suggestions. Examples: describe_available_tools("price a call option") -> [black_scholes, option_greeks], describe_available_tools("find the area under a curve") -> [integral, riemann_sum]',
     inputSchema: z.object({
-      task: z.string().describe('What you want to calculate (e.g. "solve x^2=4", "price a call option")')
+      task: taskSchema.describe('What you want to calculate (e.g. "solve x^2=4", "price a call option")')
     }),
     outputSchema: z.object({
       suggestedTools: z.array(z.string()),

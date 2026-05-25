@@ -2,6 +2,8 @@ const IDENTIFIER_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/;
 export const MATRIX_DIMENSION_LIMIT = 100;
 export const SERIES_LENGTH_LIMIT = 10000;
 export const CASHFLOW_PERIOD_LIMIT = 10000;
+export const EXPRESSION_MAX_LENGTH = 10000;
+export const TASK_MAX_LENGTH = 1000;
 
 const isPlainObject = (value) =>
   Object.prototype.toString.call(value) === '[object Object]';

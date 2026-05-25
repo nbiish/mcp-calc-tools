@@ -109,6 +109,7 @@ test/
 - **Zod validation:** Every tool input is strictly schema-validated by Genkit before handler invocation.
 - **Iteration caps:** `riemann_sum` and `volume_of_revolution` hard-limit `n`/`steps` to 100,000. Z-transform limits to 10,000. `find_root` limits to 100 iterations.
 - **Input guards:** Finance functions validate S, K, T, sigma > 0. Probability functions validate k ≥ 0, p ∈ [0,1].
+- **Expression length limits:** Expressions capped at 10,000 characters; task descriptions at 1,000 characters to prevent parser DoS.
 
 ## Security Audit Log
 
@@ -124,6 +125,7 @@ test/
 | Medium | Direct exports | Some helpers accepted invalid numeric inputs at runtime even when tool schemas were bypassed. | Fixed |
 | Medium | Pipeline evaluator | Dynamic scopes were passed through without null-prototype normalization. | Fixed |
 | Medium | Resource exhaustion | Matrix operations and long-running numeric series were not bounded tightly enough for CPU/memory abuse. | Fixed |
+| Medium | Expression parsing DoS | Expression and task strings lacked length limits, allowing large payloads to cause parser hangs. | Fixed |
 
 ### Audit notes
 
