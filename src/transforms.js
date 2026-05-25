@@ -6,8 +6,9 @@ export const laplaceTransform = (expr, t, s) => {
     assertSafeIdentifier(t, 'timeVar');
     const node = math.parse(expr);
     // Using numerical integration for a basic approximation
-    const upperLimit = 100; // Approximation of infinity
-    const steps = 1000;
+    // Upper limit: for positive s the integrand decays quickly, so cap at 30
+    const upperLimit = Math.max(20, 50 / Math.max(Math.abs(s), 0.5));
+    const steps = 2000;
     const dt = upperLimit / steps;
     let result = math.complex(0, 0);
     

@@ -179,10 +179,6 @@ pnpm start                # node index.js (starts MCP server on stdio)
 
 > Keep tasks atomic and testable.
 
-### In Progress
-- [ ] Add convergence tests for numerical transforms
-- [ ] Expand symbolic integration coverage beyond basic patterns
-
 ### Completed
 - [x] Core calculus tools (derivative, integral, Riemann sum, limit)
 - [x] Linear algebra tools (multiply, inverse, determinant, eigenvalues)
@@ -193,12 +189,15 @@ pnpm start                # node index.js (starts MCP server on stdio)
 - [x] Pipeline chaining with `$LAST` placeholder
 - [x] Tool discovery via `describe_available_tools`
 - [x] Security hardening for identifier validation, scope cloning, and direct-export input guards
+- [x] Add convergence tests for numerical transforms
+- [x] Expand symbolic integration coverage (u-substitution, integration by parts)
+- [x] Add test coverage for transforms, optimization, probability, and pipelines modules
+- [x] Add tool descriptions with worked examples for agent self-discovery
 
 ## Short-term Goals
 
-- Add test coverage for transforms, optimization, probability, and pipelines modules
-- Expand integral capabilities (u-substitution, integration by parts patterns)
-- Add tool descriptions with worked examples for agent self-discovery
+- Expand integral capabilities further (trig substitution, partial fractions)
+- Add Gaussian quadrature as higher-accuracy numerical integration option
 
 ## Reference Codebases
 

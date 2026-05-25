@@ -1,19 +1,11 @@
 # AINISH Coder Tooling Distribution - Git Ignore Patterns
+# PlatformIO ignore patterns
 
-# ai pair programmer files
-.cursor/
-.cursorrules
-.github/copilot-instructions.md
-.github/instructions/*
-.gemini/
-.qwen/
-.claude/
-.continue/
-.clinerules/
-.windsurf/
-.aider*
-.trae/
-docs/
+# PlatformIO ignore patterns
+.pio*
+.pio/
+*.pioenvs/
+pio.ini
 
 # Environment and configuration files
 .env
@@ -109,3 +101,36 @@ yarn-error.log
 
 # Security reports
 SECURITY_REPORT.md
+
+# Scrolls Lab runtime artifacts
+scrolls-lab/logs/
+scrolls-lab/reference/
+scrolls-lab/omni_output/
+scrolls-lab/sections/
+scrolls-lab/working/
+scrolls-lab/original/
+scrolls-lab/output/
+*.patch
+
+# Omni Extractor media files (global safety)
+**/*.jpg
+**/*.mp4
+**/*.vtt
+# ═══════════════════════════════════════════════════════════════════════════
+# Project-specific patterns (preserved from existing .gitignore)
+# ═══════════════════════════════════════════════════════════════════════════
+
+.aider*
+.claude/
+.clinerules/
+.continue/
+.cursor/
+.cursorrules
+.gemini/
+.github/copilot-instructions.md
+.github/instructions/*
+.qwen/
+.trae/
+.windsurf/
+docs/
+

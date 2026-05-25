@@ -18,7 +18,7 @@ const identifierSchema = z.string().regex(/^[A-Za-z_][A-Za-z0-9_]*$/, 'Must be a
 ai.defineTool(
   {
     name: 'derivative',
-    description: 'Calculate the symbolic derivative of a mathematical expression. Use for finding slopes, rates of change, and optimization points. Example: derivative("x^3 + 2x", "x") -> "3 * x ^ 2 + 2"',
+    description: 'Calculate the symbolic derivative of a mathematical expression. Returns the derivative as a string. Use for finding slopes, rates of change, and optimization points. Examples: derivative("x^3 + 2x", "x") -> "3 * x ^ 2 + 2", derivative("sin(x)") -> "cos(x)", derivative("e^x") -> "e^x", derivative("log(x, 2)") -> "1 / (x * log(2))"',
     inputSchema: z.object({
       expression: z.string().describe('Mathematical expression (e.g., "x^2", "sin(x)", "log(x)")'),
       variable: identifierSchema.optional().default('x').describe('Variable to differentiate with respect to')
@@ -31,7 +31,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'integral',
-    description: 'Calculate the symbolic indefinite integral (antiderivative). Example: integral("2x") -> "x^2". Note: Only supports basic elementary functions.',
+    description: 'Calculate the symbolic indefinite integral (antiderivative). Supports polynomials, exponentials (e^(a*x)), trig (sin, cos, tan), logarithms, u-substitution patterns (e^(x^n)*x, sin(x^n)*x), integration by parts (x*sin(x), x*e^x, ln(x), x*ln(x)), and inverse trig forms. Returns "Cannot compute integral symbolically" for unsupported forms — use riemann_sum for numerical integration instead. Examples: integral("3*x^2") -> "1 * x^3", integral("sin(x)") -> "-1 * cos(1 * x)", integral("e^(2*x)") -> "0.5 * e^(2 * x)", integral("x * sin(x)") -> "sin(x) - x * cos(x)", integral("ln(x)") -> "x * ln(x) - x"',
     inputSchema: z.object({
       expression: z.string().describe('Expression to integrate'),
       variable: identifierSchema.optional().default('x').describe('Variable of integration')
@@ -44,7 +44,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'riemann_sum',
-    description: 'Numerical definite integration using Riemann sums. Example: riemann_sum("x^2", "x", 0, 1, 1000, "trapezoid")',
+    description: 'Numerical definite integration using Riemann sums. Methods: left, right, midpoint (default), trapezoid. Returns a number. Use when symbolic integral cannot solve the expression. Examples: riemann_sum("x^2", "x", 0, 1, 1000, "trapezoid") ≈ 0.333, riemann_sum("sin(x)", "x", 0, 3.14159, 10000, "midpoint") ≈ 2.0',
     inputSchema: z.object({
       expression: z.string().describe('Function to integrate'),
       variable: identifierSchema.describe('Variable'),
@@ -61,7 +61,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'limit',
-    description: 'Determine the limit of a function as a variable approaches a value.',
+    description: 'Determine the limit of a function as a variable approaches a value. Uses numerical evaluation from both sides. Returns a number if the limit exists, or a string "Limit does not exist or function is discontinuous". Examples: limit("x^2", "x", 3) -> 9, limit("sin(x)/x", "x", 0) -> 1, limit("1/x", "x", 0) -> "Limit does not exist..."',
     inputSchema: z.object({
       expression: z.string().describe('Expression'),
       variable: identifierSchema.describe('Variable'),
@@ -75,7 +75,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'volume_of_revolution',
-    description: 'Calculate the volume of a solid of revolution around the x-axis using the disk method.',
+    description: 'Calculate the volume of a solid of revolution around the x-axis using the disk method. V = π∫f(x)²dx. Examples: volume_of_revolution("1", 0, 1) -> π ≈ 3.14159, volume_of_revolution("x", 0, 1) -> π/3 ≈ 1.047',
     inputSchema: z.object({
       expression: z.string().describe('Function f(x) to rotate'),
       start: z.number().describe('Starting x-value'),
@@ -92,7 +92,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'matrix_multiply',
-    description: 'Multiply two matrices. Input as arrays of arrays.',
+    description: 'Multiply two matrices. Input as nested arrays [[row1],[row2],...]. Column count of A must match row count of B. Max 100x100. Example: matrix_multiply([[1,2],[3,4]], [[5,6],[7,8]]) -> [[19,22],[43,50]]',
     inputSchema: z.object({
       a: z.array(z.array(z.number().finite()).max(100)).max(100),
       b: z.array(z.array(z.number().finite()).max(100)).max(100)
@@ -105,7 +105,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'matrix_inverse',
-    description: 'Find the inverse of a square matrix.',
+    description: 'Find the inverse of a square matrix. Matrix must be non-singular. Example: matrix_inverse([[1,2],[3,4]]) -> [[-2,1],[1.5,-0.5]]',
     inputSchema: z.object({
       m: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
@@ -117,7 +117,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'matrix_determinant',
-    description: 'Calculate the determinant of a square matrix.',
+    description: 'Calculate the determinant of a square matrix. Returns a scalar. Example: matrix_determinant([[1,2],[3,4]]) -> -2',
     inputSchema: z.object({
       m: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
@@ -129,7 +129,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'eigenvalues',
-    description: 'Find the eigenvalues of a square matrix.',
+    description: 'Find the eigenvalues of a square matrix. Returns an array of numbers. Example: eigenvalues([[4,1],[2,3]]) -> [5, 2]',
     inputSchema: z.object({
       m: z.array(z.array(z.number().finite()).max(100)).max(100)
     }),
@@ -143,7 +143,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'black_scholes',
-    description: 'Price a European option using Black-Scholes formula. Inputs: S (price), K (strike), T (years), r (rate), sigma (vol).',
+    description: 'Price a European option using Black-Scholes formula. Returns the option premium as a number. Inputs: S (underlying price), K (strike price), T (time to expiry in years), r (risk-free rate as decimal), sigma (volatility as decimal), optionType ("call" or "put"). Example: black_scholes(100, 105, 0.5, 0.03, 0.2, "call") ≈ 3.99',
     inputSchema: z.object({
       S: z.number().positive(),
       K: z.number().positive(),
@@ -160,7 +160,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'option_greeks',
-    description: 'Calculate Delta, Gamma, Vega, Theta, and Rho for an option.',
+    description: 'Calculate all five Option Greeks (Delta, Gamma, Vega, Theta, Rho) for a European option. Example: option_greeks(100, 100, 1, 0.05, 0.2, "call") -> {delta: ~0.63, gamma: ~0.020, vega: ~37.5, theta: ~-5.5, rho: ~51.2}',
     inputSchema: z.object({
       S: z.number().positive(),
       K: z.number().positive(),
@@ -183,7 +183,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'sharpe_ratio',
-    description: 'Calculate Sharpe ratio of a return series relative to a risk-free rate.',
+    description: 'Calculate Sharpe ratio of a return series relative to a risk-free rate. Sharpe = (mean - Rf) / std. Higher is better. Example: sharpe_ratio([0.1, 0.2, -0.05, 0.05], 0.01) ≈ 0.53',
     inputSchema: z.object({
       returns: z.array(z.number().finite()).min(2).max(10000).describe('Array of percentage returns'),
       riskFreeRate: z.number().optional().default(0).describe('Periodic risk-free rate')
@@ -196,7 +196,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'value_at_risk',
-    description: 'Estimate Value at Risk (VaR) using historical method at a given confidence level.',
+    description: 'Estimate Value at Risk (VaR) using historical method (percentile-based). Returns the loss threshold at the given confidence level. Example: value_at_risk(returns, 0.95) -> the 5th-percentile loss',
     inputSchema: z.object({
       returns: z.array(z.number().finite()).min(10).max(10000).describe('Historical returns data'),
       confidence: z.number().min(0.5).max(0.999).default(0.95).describe('Confidence level (e.g. 0.95)')
@@ -209,7 +209,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'cashflow_schedule',
-    description: 'Generate a periodic interest/balance schedule for a principal amount.',
+    description: 'Generate a periodic compound interest schedule showing interest accrued and running balance per period. Example: cashflow_schedule(1000, 0.1, 3) -> [{period:1, interest:100, balance:1100}, {period:2, interest:110, balance:1210}, {period:3, interest:121, balance:1331}]',
     inputSchema: z.object({
       principal: z.number().positive(),
       rate: z.number().nonnegative().describe('Rate per period (as decimal)'),
@@ -230,7 +230,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'normal_distribution',
-    description: 'Evaluate Normal PDF at x given mean mu and std sigma.',
+    description: 'Evaluate the Normal probability density function (PDF) at a point. Returns the density value. Examples: normal_distribution(0) -> 0.3989 (peak of standard normal), normal_distribution(1, 0, 1) -> 0.2420',
     inputSchema: z.object({
       x: z.number(),
       mu: z.number().optional().default(0),
@@ -244,7 +244,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'binomial_distribution',
-    description: 'Calculate binomial probability P(X=k) for n trials and success prob p.',
+    description: 'Calculate binomial probability P(X=k) for exactly k successes in n trials with success probability p. Example: binomial_distribution(5, 10, 0.5) -> 0.2461 (probability of exactly 5 heads in 10 flips)',
     inputSchema: z.object({
       k: z.number().int().nonnegative(),
       n: z.number().int().positive(),
@@ -258,7 +258,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'poisson_distribution',
-    description: 'Calculate Poisson probability P(X=k) for rate lambda.',
+    description: 'Calculate Poisson probability P(X=k) for a given rate lambda. Example: poisson_distribution(3, 2) -> 0.1804 (probability of exactly 3 events when average rate is 2)',
     inputSchema: z.object({
       k: z.number().int().nonnegative(),
       lambda: z.number().positive()
@@ -273,7 +273,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'laplace_transform',
-    description: 'Numerical approximation of the Laplace transform of a function f(t).',
+    description: 'Numerical approximation of the Laplace transform F(s) = ∫₀^∞ f(t)·e^(-st) dt. Provide expression in t, and a real s value. Returns a complex number string. Example: laplace_transform("e^(-t)", "t", 1) ≈ "0.5" (exact: 1/(s+1))',
     inputSchema: z.object({
       expression: z.string().describe('f(t)'),
       timeVar: identifierSchema.default('t'),
@@ -287,7 +287,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'fourier_transform',
-    description: 'Numerical approximation of the Fourier transform of a function f(t).',
+    description: 'Numerical approximation of the Fourier transform F(ω) = ∫ f(t)·e^(-iωt) dt. Provide expression in t and frequency ω. Returns a complex number string. Example: fourier_transform("e^(-t^2)", "t", 0) ≈ "1.772" (exact: √π)',
     inputSchema: z.object({
       expression: z.string().describe('f(t)'),
       timeVar: identifierSchema.default('t'),
@@ -303,7 +303,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'find_root',
-    description: 'Find root of f(x)=0 using Newton method. Provide expression, variable, and initial guess.',
+    description: 'Find root of f(x)=0 using Newton-Raphson method. Provide the expression, variable, and initial guess. Converges quickly for well-behaved functions. Examples: find_root("x^2 - 4", "x", 3) -> 2, find_root("cos(x) - 0.5", "x", 1) -> 1.0472 (=π/3)',
     inputSchema: z.object({
       expression: z.string().describe('f(x)'),
       variable: identifierSchema.default('x'),
@@ -319,7 +319,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'describe_available_tools',
-    description: 'Find the right tool for your math or finance problem. Describe your goal in natural language.',
+    description: 'Find the right tool for your math or finance problem. Describe your goal in natural language and get tool suggestions. Examples: describe_available_tools("price a call option") -> [black_scholes, option_greeks], describe_available_tools("find the area under a curve") -> [integral, riemann_sum]',
     inputSchema: z.object({
       task: z.string().describe('What you want to calculate (e.g. "solve x^2=4", "price a call option")')
     }),
@@ -355,7 +355,7 @@ ai.defineTool(
 ai.defineTool(
   {
     name: 'evaluate_pipeline',
-    description: 'Execute a sequence of mathematical operations where the result of one can be used in the next using "$LAST".',
+    description: 'Execute a sequence of mathematical operations where $LAST in an expression is replaced by the previous result. Currently supports op "math" which uses mathjs evaluate. Example: [{op:"math", args:{expression:"2 + 3"}}, {op:"math", args:{expression:"$LAST * 4"}}] -> {lastResult: 20, results: [5, 20]}',
     inputSchema: z.object({
       operations: z.array(z.object({
         op: z.string().describe('Operation type (currently only "math" supported)'),

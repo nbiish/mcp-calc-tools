@@ -17,17 +17,17 @@ export const evaluateChain = (operations) => {
       return value === '$LAST' ? lastResult : value;
     });
 
-    // This is a simplified version. A real implementation would map 'op' to actual tool functions.
-    // For now, we'll use math.evaluate if it's a simple math op, or handle specific cases.
     if (op === 'math') {
       const scope =
         processedArgs.scope && typeof processedArgs.scope === 'object'
           ? createSafeScope(processedArgs.scope)
           : createSafeScope();
-      lastResult = math.evaluate(
-        processedArgs.expression,
-        scope
+      // Substitute $LAST in the expression string with the previous result
+      const expression = String(processedArgs.expression).replace(
+        /\$LAST/g,
+        lastResult !== null && lastResult !== undefined ? String(lastResult) : '0'
       );
+      lastResult = math.evaluate(expression, scope);
     } else {
       throw new Error(`Operation ${op} not supported in chain yet.`);
     }
